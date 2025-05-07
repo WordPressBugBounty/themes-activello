@@ -259,18 +259,30 @@ class Epsilon_Typography {
 	 * Generate typography CSS
 	 */
 	public function epsilon_generate_typography_css() {
+		// Check for nonce security
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], 'epsilon_framework_ajax_action' ) ) {
+			wp_die( 'Security check failed' );
+		}
+		
+		// Check for required parameters
+		if ( ! isset( $_POST['args'] ) || ! isset( $_POST['args']['json'] ) || ! isset( $_POST['args']['selectors'] ) ) {
+			wp_die( 'Required parameters missing' );
+		}
+		
 		$args = array(
-			'selectors',
-			'json',
+			'selectors' => '',
+			'json' => array(),
 		);
 
 		/**
 		 * Sanitize the $_POST['args']
 		 */
-		foreach ( $_POST['args']['json'] as $k => $v ) {
-			$args['json'][ $k ] = esc_attr( $v );
+		if ( is_array( $_POST['args']['json'] ) ) {
+			foreach ( $_POST['args']['json'] as $k => $v ) {
+				$args['json'][ sanitize_key( $k ) ] = sanitize_text_field( $v );
+			}
 		}
-		$args['selectors'] = esc_attr( $_POST['args']['selectors'] );
+		$args['selectors'] = sanitize_text_field( $_POST['args']['selectors'] );
 
 		$typography = Epsilon_Typography::get_instance();
 		$typography->set_font( $args['json'] );

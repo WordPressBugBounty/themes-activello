@@ -272,13 +272,23 @@ class Epsilon_Color_Scheme {
 	 * Generate the color scheme css
 	 */
 	public function epsilon_generate_color_scheme_css() {
+		// Check for nonce security
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], 'epsilon_framework_ajax_action' ) ) {
+			wp_die( 'Security check failed' );
+		}
+		
+		// Check for required parameters
+		if ( ! isset( $_POST['args'] ) || ! is_array( $_POST['args'] ) ) {
+			wp_die( 'Required parameters missing' );
+		}
+		
 		$args = array();
 
 		/**
 		 * Sanitize the $_POST['args']
 		 */
 		foreach ( $_POST['args'] as $k => $v ) {
-			$args[ $k ] = sanitize_hex_color( $v );
+			$args[ sanitize_key( $k ) ] = sanitize_hex_color( $v );
 		}
 
 		/**

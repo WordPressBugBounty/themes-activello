@@ -13,7 +13,7 @@ Easiest way to go about cloning a repository recursively is to use (Windows only
 
 * Theme Name: Activello
 * Theme URI: https://colorlib.com/wp/Activello/
-* Version: 1.4.6
+* Version: 1.4.7
 * Tested up to: WP 6.8
 
 ```
@@ -74,7 +74,7 @@ Afterwards you can continue theme setup and customization via WordPress Dashboar
 Theme documentation is available on https://colorlib.com/wp/support/activello
 
 #### Changelog
-= 1.4.6 =
+= 1.4.7 =
 * Fixed PHP 8.2+ compatibility issues with dynamic properties
 * Added property declarations to theme classes to prevent PHP warnings
 * Updated plugin recommendation screen to handle WP_Error objects properly
@@ -82,6 +82,14 @@ Theme documentation is available on https://colorlib.com/wp/support/activello
 * Added proper validation checks in epsilon framework classes
 * Improved handling of arrays and objects for better PHP 8.2+ compatibility
 * Updated theme files to ensure compatibility with WordPress 6.8
+* Fixed security vulnerability: Added proper sanitization and escaping to prevent XSS in admin dashboard
+* Enhanced security in the welcome screen by sanitizing tab parameters
+* Improved plugin activation/deactivation security with proper sanitization
+* Strengthened AJAX handlers in Epsilon framework with nonce verification
+* Secured typography and color scheme AJAX handlers against unauthorized access
+* Enhanced metabox saving with proper input sanitization
+* Implemented additional checks for user capabilities across the theme
+* Applied strict data validation throughout admin features
 
 = 1.4.5 = 
 * Improved Escaping

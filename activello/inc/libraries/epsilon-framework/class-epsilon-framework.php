@@ -137,7 +137,7 @@ class Epsilon_Framework {
 			);
 		}
 
-		if ( 'epsilon_framework_ajax_action' !== $_POST['action'] ) {
+		if ( ! isset( $_POST['action'] ) || 'epsilon_framework_ajax_action' !== $_POST['action'] ) {
 			wp_die(
 				json_encode(
 					array(
@@ -148,7 +148,7 @@ class Epsilon_Framework {
 			);
 		}
 
-		if ( count( $_POST['args']['action'] ) !== 2 ) {
+		if ( ! isset( $_POST['args'] ) || ! isset( $_POST['args']['action'] ) || ! is_array( $_POST['args']['action'] ) || count( $_POST['args']['action'] ) !== 2 ) {
 			wp_die(
 				json_encode(
 					array(
@@ -159,7 +159,10 @@ class Epsilon_Framework {
 			);
 		}
 
-		if ( 'Epsilon_Framework' != $_POST['args']['action'][0] ) {
+		$class_name = sanitize_text_field( $_POST['args']['action'][0] );
+		$method = sanitize_text_field( $_POST['args']['action'][1] );
+		
+		if ( 'Epsilon_Framework' !== $class_name ) {
 			wp_die(
 				json_encode(
 					array(
@@ -170,11 +173,30 @@ class Epsilon_Framework {
 			);
 		}
 
-		$class  = $_POST['args']['action'][0];
-		$method = $_POST['args']['action'][1];
-		$args   = $_POST['args']['args'];
+		// Only allow specific methods to be called
+		$allowed_methods = array( 'dismiss_required_action' );
+		if ( ! in_array( $method, $allowed_methods, true ) ) {
+			wp_die(
+				json_encode(
+					array(
+						'status' => false,
+						'error'  => 'Method not allowed',
+					)
+				)
+			);
+		}
 
-		$response = $class::$method( $args );
+		$args = array();
+		if ( isset( $_POST['args']['args'] ) ) {
+			// Process and sanitize args
+			if ( is_array( $_POST['args']['args'] ) ) {
+				foreach ( $_POST['args']['args'] as $key => $value ) {
+					$args[ sanitize_key( $key ) ] = sanitize_text_field( $value );
+				}
+			}
+		}
+
+		$response = self::$method( $args );
 
 		if ( 'ok' == $response ) {
 			wp_die(

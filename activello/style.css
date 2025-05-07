@@ -4,19 +4,19 @@ Theme URI: https://colorlib.com/wp/themes/activello/
 Author: Colorlib
 Author URI: http://colorlib.com
 Description: Activello is a clean and minimal WordPress blog theme with premium look and feel well suited for food, fashion, travel, lifestyle, sports and any other awesome blogs. This theme features WooCommerce integration that allows you to create fully functional eCommerce website side by side with your blog. This theme has several customization options that are available WordPress Theme Customizer. Theme is also multilingual ready and translated in several languages. This awesome blog theme is also SEO friendly helping you to achieve the highest positions on Google. Activello is the only WordPress blog theme you will ever need.
-Version: 1.4.6
+Version: 1.4.7
 Tested up to: 6.8
-Requires PHP: 7.4
+Requires PHP: 7.0
 License: GNU General Public License v3 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: activello
 Domain Path: /languages/
-Tags: blog, entertainment, portfolio
-
+Tags: blog, custom-background, custom-colors, custom-menu, featured-images, full-width-template, rtl-language-support, sticky-post, theme-options, threaded-comments, translation-ready, two-columns, custom-logo, editor-style, footer-widgets
 
 This theme, like WordPress, is licensed under the GPL.
+Use it to make something cool, have fun, and share what you've learned with others.
 
-Sparkling is based on Underscores https://underscores.me/, (C) 2012-2015 Automattic, Inc.
+Activello is based on Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc.
 
 */
 
@@ -1672,8 +1672,7 @@ p.logged-in-as {
     width: 100%;
 }
 .gallery-item:hover .gallery-caption,
-.gallery-item:focus-within .gallery-caption,
-{
+.gallery-item:focus-within .gallery-caption {
     opacity: 1;
 }
 .gallery-columns-7 .gallery-caption, .gallery-columns-8 .gallery-caption, .gallery-columns-9 .gallery-caption {
