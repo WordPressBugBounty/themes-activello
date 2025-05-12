@@ -253,20 +253,22 @@ require get_template_directory() . '/inc/metaboxes.php';
  */
 require get_template_directory() . '/inc/socialnav.php';
 
-/* Globals */
-global $site_layout, $header_show;
-$site_layout = array(
-	'pull-right' => esc_html__( 'Left Sidebar','activello' ),
-	'side-right' => esc_html__( 'Right Sidebar','activello' ),
-	'no-sidebar' => esc_html__( 'No Sidebar','activello' ),
-	'full-width' => esc_html__( 'Full Width', 'activello' ),
-);
-$header_show = array(
-	'logo-only' => __( 'Logo Only', 'activello' ),
-	'logo-text' => __( 'Logo + Tagline', 'activello' ),
-	'title-only' => __( 'Title Only', 'activello' ),
-	'title-text' => __( 'Title + Tagline', 'activello' ),
-);
+function activello_setup_globals() {
+	global $site_layout, $header_show;
+	$site_layout = array(
+		'pull-right' => esc_html__( 'Left Sidebar','activello' ),
+		'side-right' => esc_html__( 'Right Sidebar','activello' ),
+		'no-sidebar' => esc_html__( 'No Sidebar','activello' ),
+		'full-width' => esc_html__( 'Full Width', 'activello' ),
+	);
+	$header_show = array(
+		'logo-only' => __( 'Logo Only', 'activello' ),
+		'logo-text' => __( 'Logo + Tagline', 'activello' ),
+		'title-only' => __( 'Title Only', 'activello' ),
+		'title-text' => __( 'Title + Tagline', 'activello' ),
+	);
+}
+add_action( 'after_setup_theme', 'activello_setup_globals' );
 
 if ( ! function_exists( 'activello_get_single_category' ) ) :
 	/* Get Single Post Category */
@@ -340,8 +342,12 @@ $args = array(
 
 new Epsilon_Framework( $args );
 
-// Add welcome screen
-require get_template_directory() . '/inc/welcome-screen/welcome-page-setup.php';
+// Add welcome screen - moved to init hook
+function activello_welcome_screen_setup() {
+	require get_template_directory() . '/inc/welcome-screen/welcome-page-setup.php';
+}
+add_action( 'init', 'activello_welcome_screen_setup' );
+
 // require get_template_directory() . '/inc/class-activello-nux-admin.php';
 
 if ( ! function_exists( 'wp_body_open' ) ) {
