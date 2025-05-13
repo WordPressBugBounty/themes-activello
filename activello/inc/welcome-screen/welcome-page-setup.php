@@ -16,6 +16,16 @@ function activello_ws_customize_register( $wp_customize ) {
 		}
 	}
 
+	// Make sure the Epsilon Section classes are loaded
+	$section_path = get_template_directory() . '/inc/libraries/epsilon-framework/sections/';
+	if ( ! class_exists( 'Epsilon_Section_Recommended_Actions' ) && file_exists( $section_path . 'class-epsilon-section-recommended-actions.php' ) ) {
+		require_once $section_path . 'class-epsilon-section-recommended-actions.php';
+	}
+	
+	if ( ! class_exists( 'Epsilon_Section_Pro' ) && file_exists( $section_path . 'class-epsilon-section-pro.php' ) ) {
+		require_once $section_path . 'class-epsilon-section-pro.php';
+	}
+
 	$theme_slug = 'activello';
 
 	$wp_customize->add_section(

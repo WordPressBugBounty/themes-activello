@@ -338,6 +338,7 @@ require_once 'inc/libraries/epsilon-framework/class-epsilon-autoloader.php';
 $args = array(
 	'controls' => array( 'toggle' ), // array of controls to load
 	'sections' => array( 'recommended-actions', 'pro' ), // array of sections to load
+	'path'     => get_template_directory() . '/inc/libraries/epsilon-framework/', // path to Epsilon Framework
 );
 
 new Epsilon_Framework( $args );
@@ -346,7 +347,7 @@ new Epsilon_Framework( $args );
 function activello_welcome_screen_setup() {
 	require get_template_directory() . '/inc/welcome-screen/welcome-page-setup.php';
 }
-add_action( 'init', 'activello_welcome_screen_setup' );
+add_action( 'init', 'activello_welcome_screen_setup', 20 );
 
 // require get_template_directory() . '/inc/class-activello-nux-admin.php';
 
