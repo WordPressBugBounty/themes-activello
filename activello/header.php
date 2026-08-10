@@ -7,16 +7,7 @@
  * @package activello
  */
 ?><!doctype html>
-	<!--[if !IE]>
-	<html class="no-js non-ie" <?php language_attributes(); ?>> <![endif]-->
-	<!--[if IE 7 ]>
-	<html class="no-js ie7" <?php language_attributes(); ?>> <![endif]-->
-	<!--[if IE 8 ]>
-	<html class="no-js ie8" <?php language_attributes(); ?>> <![endif]-->
-	<!--[if IE 9 ]>
-	<html class="no-js ie9" <?php language_attributes(); ?>> <![endif]-->
-	<!--[if gt IE 9]><!-->
-<html class="no-js" <?php language_attributes(); ?>> <!--<![endif]-->
+<html class="no-js" <?php language_attributes(); ?>>
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,8 +39,8 @@
 
 						<div class="nav-search"><?php
 							add_filter( 'get_search_form', 'activello_header_search_filter',10,3 );
-							echo get_search_form();
-							remove_filter( 'get_search_form', 'activello_header_search_filter' );?>							
+							get_search_form();
+							remove_filter( 'get_search_form', 'activello_header_search_filter' );?>
 						</div>
 					</div>
 				</div>
@@ -122,4 +113,4 @@
 						}?>
 
 			<div class="row">
-				<div class="main-content-inner <?php echo activello_main_content_bootstrap_classes(); ?> <?php echo $layout_class; ?>">
+				<div class="main-content-inner <?php echo esc_attr( activello_main_content_bootstrap_classes() ); ?> <?php echo esc_attr( $layout_class ); ?>">
