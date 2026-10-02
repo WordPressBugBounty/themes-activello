@@ -49,9 +49,13 @@ if ( class_exists( 'WP_Customize_Control' ) ) {
 				</span>
 				<div class="onoffswitch">
 					<input type="checkbox" id="<?php echo esc_attr( $this->id ); ?>"
-						   name="<?php echo esc_attr( $this->id ); ?>" class="onoffswitch-checkbox"
-						   value="<?php echo esc_attr( $this->value() ); ?>" <?php $this->link();
-							checked( $this->value() ); ?>>
+							name="<?php echo esc_attr( $this->id ); ?>" class="onoffswitch-checkbox"
+							value="<?php echo esc_attr( $this->value() ); ?>" 
+							<?php
+							$this->link();
+							checked( $this->value() );
+							?>
+							>
 					<label class="onoffswitch-label" for="<?php echo esc_attr( $this->id ); ?>"></label>
 				</div>
 			</div>
@@ -69,6 +73,7 @@ if ( class_exists( 'WP_Customize_Control' ) ) {
 	 * @deprecated 1.6.0 Use Activello_Customize_Toggle_Control instead.
 	 */
 	if ( ! class_exists( 'Epsilon_Control_Toggle' ) ) {
+		// phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- deprecated alias of the class above, for child themes.
 		class Epsilon_Control_Toggle extends Activello_Customize_Toggle_Control {
 		}
 	}

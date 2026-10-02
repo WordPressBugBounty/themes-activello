@@ -2,20 +2,21 @@
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Activello 1.5.0\n"
-"Report-Msgid-Bugs-To: https://colorlib.com/\n"
+"Project-Id-Version: Activello 1.7.0\n"
+"Report-Msgid-Bugs-To: https://www.colorlib.com/\n"
 "Last-Translator: Colorlib <office@colorlib.com>\n"
 "Language-Team: Colorlib <office@colorlib.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-10T12:17:12+00:00\n"
+"POT-Creation-Date: 2026-10-01T13:47:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: activello\n"
 
 #. Theme Name of the theme
 #: style.css
+#: inc/block-editor.php:57
 msgid "Activello"
 msgstr ""
 
@@ -26,7 +27,7 @@ msgstr ""
 
 #. Description of the theme
 #: style.css
-msgid "Activello is a creative and modern WordPress blog theme. It's perfect for personal blogs, magazines, newspapers, and other editorial projects. The theme is fully responsive and Retina ready. It has a clean and modern design with a focus on typography and usability."
+msgid "Activello is a clean and minimal WordPress blog theme with a premium look and feel, well suited for food, fashion, travel, lifestyle and any other beautiful blog. It ships a full-width featured slider, a widgetized sidebar, four layout options you can set globally or per post, and Customizer options for colours, header and footer with live preview. The front end is fully responsive, built on Bootstrap, and the theme's own JavaScript runs without jQuery. Activello is WooCommerce ready, SEO friendly, translation ready and comes with over twenty bundled translations."
 msgstr ""
 
 #. Author of the theme
@@ -48,8 +49,8 @@ msgid "It looks like nothing was found at this location. Maybe try one of the li
 msgstr ""
 
 #: 404.php:25
-#: inc/widgets/class-activello-recent-posts.php:15
-#: inc/widgets/class-activello-recent-posts.php:92
+#: inc/widgets/class-activello-recent-posts.php:32
+#: inc/widgets/class-activello-recent-posts.php:96
 msgid "Recent Posts"
 msgstr ""
 
@@ -58,18 +59,18 @@ msgid "Most Used Categories"
 msgstr ""
 
 #. translators: %1$s: smiley
-#: 404.php:52
+#: 404.php:54
 #, php-format
 msgid "Try looking in the monthly archives. %1$s"
 msgstr ""
 
-#: 404.php:53
+#: 404.php:59
 #: archive.php:70
-#: sidebar.php:29
+#: sidebar.php:20
 msgid "Archives"
 msgstr ""
 
-#: 404.php:58
+#: 404.php:67
 msgid "Tags"
 msgstr ""
 
@@ -146,14 +147,14 @@ msgid "Chats"
 msgstr ""
 
 #. translators: %s: post title
-#: comments.php:31
+#: comments.php:33
 #, php-format
 msgctxt "comments title"
 msgid "One Reply to &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: 1: number of comments, 2: post title
-#: comments.php:35
+#: comments.php:40
 #, php-format
 msgctxt "comments title"
 msgid "%1$s Reply to &ldquo;%2$s&rdquo;"
@@ -161,331 +162,341 @@ msgid_plural "%1$s Replies to &ldquo;%2$s&rdquo;"
 msgstr[0] ""
 msgstr[1] ""
 
-#: comments.php:51
-#: comments.php:70
+#: comments.php:56
+#: comments.php:57
+#: comments.php:77
+#: comments.php:78
 msgid "Comment navigation"
 msgstr ""
 
-#: comments.php:52
-#: comments.php:71
+#: comments.php:58
+#: comments.php:79
 msgid "&larr; Older Comments"
 msgstr ""
 
-#: comments.php:53
-#: comments.php:72
+#: comments.php:59
+#: comments.php:80
 msgid "Newer Comments &rarr;"
 msgstr ""
 
-#: comments.php:82
+#: comments.php:90
 msgid "Comments are closed."
 msgstr ""
 
-#: comments.php:93
+#: comments.php:106
+#: comments.php:107
 msgid "Name"
 msgstr ""
 
-#: comments.php:97
+#: comments.php:108
+#: comments.php:109
 msgid "Email"
 msgstr ""
 
-#: comments.php:101
+#: comments.php:110
+#: comments.php:111
 msgid "Website"
 msgstr ""
 
-#: comments.php:110
+#: comments.php:118
 msgid "Post Reply"
 msgstr ""
 
-#: comments.php:112
+#: comments.php:120
 msgctxt "comment form placeholder"
 msgid "Comment"
 msgstr ""
 
-#: functions.php:86
+#: footer.php:38
+msgid "Back to top"
+msgstr ""
+
+#: functions.php:92
 msgid "Primary Menu"
 msgstr ""
 
-#: functions.php:164
+#: functions.php:186
 msgid "Sidebar"
 msgstr ""
 
-#: functions.php:315
+#: functions.php:341
 msgid "Left Sidebar"
 msgstr ""
 
-#: functions.php:316
+#: functions.php:342
 msgid "Right Sidebar"
 msgstr ""
 
-#: functions.php:317
+#: functions.php:343
 msgid "No Sidebar"
 msgstr ""
 
-#: functions.php:318
+#: functions.php:344
 msgid "Full Width"
 msgstr ""
 
-#: functions.php:321
+#: functions.php:347
 msgid "Logo Only"
 msgstr ""
 
-#: functions.php:322
+#: functions.php:348
 msgid "Logo + Tagline"
 msgstr ""
 
-#: functions.php:323
+#: functions.php:349
 msgid "Title Only"
 msgstr ""
 
-#: functions.php:324
+#: functions.php:350
 msgid "Title + Tagline"
 msgstr ""
 
-#: functions.php:387
+#: functions.php:427
+#: searchform.php:13
+msgid "Search for:"
+msgstr ""
+
+#: functions.php:428
 msgctxt "search placeholder"
 msgid "Search"
 msgstr ""
 
-#: functions.php:387
-#: searchform.php:14
+#: functions.php:429
+#: searchform.php:16
 msgctxt "submit button"
 msgid "Search"
 msgstr ""
 
-#: header.php:33
+#: header.php:26
+msgid "Skip to content"
+msgstr ""
+
+#: header.php:29
+msgid "Primary"
+msgstr ""
+
+#: header.php:35
 msgid "Toggle navigation"
 msgstr ""
 
-#: image.php:22
-msgid "<i class=\"fa fa-chevron-left\"></i> Previous"
+#: image.php:27
+msgid "Image navigation"
 msgstr ""
 
-#: image.php:23
-msgid "Next <i class=\"fa fa-chevron-right\"></i>"
+#: image.php:28
+msgid "<i class=\"fa-solid fa-chevron-left\"></i> Previous"
 msgstr ""
 
-#: image.php:80
-#: template-parts/content-grid.php:41
-#: template-parts/content-page.php:26
-#: template-parts/content-single.php:48
-#: template-parts/content.php:80
+#: image.php:29
+msgid "Next <i class=\"fa-solid fa-chevron-right\"></i>"
+msgstr ""
+
+#: image.php:93
+#: page-blocks.php:28
+#: template-parts/content-grid.php:42
+#: template-parts/content-page.php:27
+#: template-parts/content-single.php:49
+#: template-parts/content.php:81
 msgid "Pages:"
 msgstr ""
 
-#: inc/class-activello-nux-admin.php:62
-msgid "Thanks for installing Activello, you rock!"
+#. translators: %s: parent menu item title
+#: inc/class-activello-wp-bootstrap-navwalker.php:139
+#, php-format
+msgid "Show sub-menu of %s"
 msgstr ""
 
-#: inc/class-activello-nux-admin.php:63
-msgid "Activello now support full width posts on homepage. If you have done this using custom CSS please go to Customizer -> Activello Options -> Layout Options -> Blog Posts Layout Options in order to have full width images."
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:64
-msgid "Also in order to increase our theme speed we changed the images' sizes. In order to take advantage of this improvement you'll need to use Force Regenerate Thumbnails to regenerate all your image sizes."
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:65
-msgid "Regenerate Thumbnails Now"
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:65
-msgid "Activate Force Regenerate Thumbnails"
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:65
-msgid "Install Force Regenerate Thumbnails"
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:91
-msgid "Settings"
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:102
-#: inc/welcome-screen/sections/actions-required.php:70
-#: inc/welcome-screen/sections/actions-required.php:133
-#: inc/welcome-screen/sections/recommended-plugins.php:53
-msgid "Activate"
-msgstr ""
-
-#: inc/class-activello-nux-admin.php:117
-msgid "Install now"
-msgstr ""
-
-#: inc/customizer.php:30
+#: inc/customizer.php:72
 msgid "Show"
 msgstr ""
 
-#: inc/customizer.php:38
+#: inc/customizer.php:83
 msgid "Activello Options"
 msgstr ""
 
-#: inc/customizer.php:39
-msgid "Panel to update activello theme options"
+#: inc/customizer.php:84
+msgid "Options for the Activello theme."
 msgstr ""
 
-#: inc/customizer.php:45
+#: inc/customizer.php:93
 msgid "Content Options"
 msgstr ""
 
-#: inc/customizer.php:59
+#: inc/customizer.php:115
 msgid "Show post excerpts?"
 msgstr ""
 
-#: inc/customizer.php:73
+#: inc/customizer.php:138
 msgid "Show only one category in archives?"
 msgstr ""
 
-#: inc/customizer.php:85
+#: inc/customizer.php:159
 msgid "Display Comments on Static Pages?"
 msgstr ""
 
-#: inc/customizer.php:91
+#: inc/customizer.php:169
 msgid "Slider Options"
 msgstr ""
 
-#: inc/customizer.php:104
+#: inc/customizer.php:188
 msgid "Choose a category"
 msgstr ""
 
-#: inc/customizer.php:117
+#: inc/customizer.php:207
 msgid "Limit posts"
 msgstr ""
 
-#: inc/customizer.php:129
+#: inc/customizer.php:208
+msgid "How many posts the slider shows. -1 shows every post with a featured image."
+msgstr ""
+
+#: inc/customizer.php:232
 msgid "Show Slider"
 msgstr ""
 
-#: inc/customizer.php:135
-msgid "Layout options"
+#: inc/customizer.php:242
+msgid "Layout Options"
 msgstr ""
 
-#: inc/customizer.php:146
+#: inc/customizer.php:259
 msgid "Website Layout Options"
 msgstr ""
 
-#: inc/customizer.php:149
+#: inc/customizer.php:262
 msgid "Choose between different layout options to be used as default"
 msgstr ""
 
-#: inc/customizer.php:158
+#: inc/customizer.php:277
 msgid "Blog Posts Layout Options"
 msgstr ""
 
-#: inc/customizer.php:161
+#: inc/customizer.php:280
 msgid "Choose how you want your posts to look on the Blog Page"
 msgstr ""
 
-#: inc/customizer.php:163
+#: inc/customizer.php:282
 msgid "Two full width posts then half width posts"
 msgstr ""
 
-#: inc/customizer.php:164
+#: inc/customizer.php:283
 msgid "Full width posts"
 msgstr ""
 
-#: inc/customizer.php:173
+#: inc/customizer.php:300
 msgid "Accent Color"
 msgstr ""
 
-#: inc/customizer.php:174
-#: inc/customizer.php:184
-#: inc/customizer.php:194
+#: inc/customizer.php:301
+#: inc/customizer.php:320
+#: inc/customizer.php:339
 msgid "Default used if no color is selected"
 msgstr ""
 
-#: inc/customizer.php:183
-msgid "Social icon color"
+#: inc/customizer.php:319
+msgid "Social Icon Color"
 msgstr ""
 
-#: inc/customizer.php:193
-msgid "Social Icon:hover Color"
+#: inc/customizer.php:338
+msgid "Social Icon Hover Color"
 msgstr ""
 
-#: inc/customizer.php:200
+#: inc/customizer.php:349
 msgid "Footer"
 msgstr ""
 
-#: inc/customizer.php:212
+#: inc/customizer.php:372
 msgid "Copyright Text"
 msgstr ""
 
-#: inc/customizer.php:218
-msgid "Other"
+#: inc/customizer.php:373
+msgid "Basic HTML such as links is allowed."
 msgstr ""
 
-#: inc/extras.php:59
+#: inc/extras.php:128
 msgid "Untitled"
 msgstr ""
 
-#: inc/extras.php:76
+#: inc/extras.php:167
 msgid "This post is password protected. To view it please enter your password below:"
 msgstr ""
 
-#: inc/extras.php:77
+#: inc/extras.php:168
 msgid "Password:"
 msgstr ""
 
-#: inc/extras.php:80
+#: inc/extras.php:171
 msgid "Submit"
 msgstr ""
 
-#: inc/extras.php:159
+#: inc/extras.php:275
 #: template-parts/content-grid.php:32
 #: template-parts/content.php:65
-#: template-parts/content.php:91
+#: template-parts/content.php:93
 msgid "Read More"
 msgstr ""
 
 #. translators: 1: link to Colorlib, 2: link to WordPress
-#: inc/extras.php:178
+#: inc/extras.php:293
 #, php-format
 msgid "Theme by %1$s Powered by %2$s"
 msgstr ""
 
+#: inc/extras.php:350
+msgid "All"
+msgstr ""
+
 #. translators: %s: comment author link
-#: inc/extras.php:267
+#: inc/extras.php:384
 #, php-format
 msgid "<cite class=\"fn\">%s</cite> <span class=\"says\">says:</span>"
 msgstr ""
 
 #. translators: 1: date, 2: time
-#: inc/extras.php:279
+#: inc/extras.php:397
 #, php-format
 msgid "%1$s at %2$s"
 msgstr ""
 
-#. translators: 1: date, 2: time
-#: inc/extras.php:279
+#: inc/extras.php:401
 #: template-parts/content-grid.php:16
-#: template-parts/content-page.php:31
+#: template-parts/content-page.php:33
 msgid "Edit"
 msgstr ""
 
-#: inc/extras.php:285
+#: inc/extras.php:407
 msgid "Your comment is awaiting moderation."
 msgstr ""
 
-#: inc/metaboxes.php:15
+#: inc/metaboxes.php:16
 msgid "Select layout for this specific Page only ( Note: This setting only reflects if page Template is set as Default Template and Blog Type Templates.)"
 msgstr ""
 
-#: inc/metaboxes.php:20
+#: inc/metaboxes.php:22
 msgid "Select layout for this specific Post only"
 msgstr ""
 
-#: inc/metaboxes.php:27
+#: inc/metaboxes.php:30
 msgid "Select layout for this specific Product only"
 msgstr ""
 
-#: inc/metaboxes.php:56
+#: inc/metaboxes.php:52
+msgid "Layout"
+msgstr ""
+
+#: inc/metaboxes.php:54
 msgid "Default"
 msgstr ""
 
-#: inc/socialnav.php:13
+#: inc/socialnav.php:17
 msgctxt "nav menu location"
 msgid "Social Menu"
 msgstr ""
 
+#: inc/socialnav.php:49
+msgid "Social links"
+msgstr ""
+
+#: inc/template-tags.php:22
 #: inc/template-tags.php:23
 msgid "Posts navigation"
 msgstr ""
@@ -498,129 +509,104 @@ msgstr ""
 msgid "Newer posts"
 msgstr ""
 
+#: inc/template-tags.php:55
 #: inc/template-tags.php:56
 msgid "Post navigation"
 msgstr ""
 
 #: inc/template-tags.php:59
 msgctxt "Previous post link"
-msgid "<i class=\"fa fa-chevron-left\"></i> %title"
+msgid "<i class=\"fa-solid fa-chevron-left\"></i> %title"
 msgstr ""
 
 #: inc/template-tags.php:60
 msgctxt "Next post link"
-msgid "%title <i class=\"fa fa-chevron-right\"></i>"
+msgid "%title <i class=\"fa-solid fa-chevron-right\"></i>"
 msgstr ""
 
-#: inc/template-tags.php:86
+#: inc/template-tags.php:88
 msgid "Posted on"
 msgstr ""
 
-#: inc/template-tags.php:86
+#: inc/template-tags.php:88
 msgid "by"
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:82
-#: inc/welcome-screen/class-activello-welcome.php:197
-#: inc/welcome-screen/class-activello-welcome.php:241
-msgid "You are not allowed to do that."
-msgstr ""
-
-#: inc/welcome-screen/class-activello-welcome.php:91
-msgid "No page titled \"Homepage\" was found."
+#: inc/welcome-screen/class-activello-welcome.php:63
+#: inc/welcome-screen/class-activello-welcome.php:64
+#: inc/welcome-screen/class-activello-welcome.php:309
+msgid "About Activello"
 msgstr ""
 
 #. translators: 1: opening link tag to the welcome page, 2: closing link tag
-#: inc/welcome-screen/class-activello-welcome.php:155
+#: inc/welcome-screen/class-activello-welcome.php:91
 #, php-format
 msgid "Welcome! Thank you for choosing Activello! To fully take advantage of the best our theme can offer please make sure you visit our %1$swelcome page%2$s."
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:158
+#: inc/welcome-screen/class-activello-welcome.php:97
 msgid "Get started with Activello"
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:182
-#: inc/welcome-screen/sections/actions-required.php:160
-msgid "Hooray! There are no required actions for you right now."
-msgstr ""
-
-#: inc/welcome-screen/class-activello-welcome.php:416
+#: inc/welcome-screen/class-activello-welcome.php:278
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:430
-msgid "Welcome to Activello! - Version "
-msgstr ""
-
-#: inc/welcome-screen/class-activello-welcome.php:433
-msgid "Activello is now installed and ready to use! Get ready to build something beautiful. We hope you enjoy it! We want to make sure you have the best experience using Activello and that is why we gathered here all the necessary information for you. We hope you will enjoy using Activello, as much as we enjoy creating great products."
-msgstr ""
-
-#: inc/welcome-screen/class-activello-welcome.php:440
+#: inc/welcome-screen/class-activello-welcome.php:282
 msgid "Getting Started"
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:442
+#: inc/welcome-screen/class-activello-welcome.php:283
 msgid "Recommended Plugins"
 msgstr ""
 
-#: inc/welcome-screen/class-activello-welcome.php:444
+#: inc/welcome-screen/class-activello-welcome.php:284
 msgid "Support"
 msgstr ""
 
-#: inc/welcome-screen/sections/actions-required.php:66
-#: inc/welcome-screen/sections/actions-required.php:129
-msgid "Install"
+#. translators: %s: theme version
+#: inc/welcome-screen/class-activello-welcome.php:301
+#, php-format
+msgid "Welcome to Activello! - Version %s"
 msgstr ""
 
-#: inc/welcome-screen/sections/actions-required.php:74
-#: inc/welcome-screen/sections/actions-required.php:137
-#: inc/welcome-screen/sections/recommended-plugins.php:57
-msgid "Deactivate"
+#: inc/welcome-screen/class-activello-welcome.php:305
+msgid "Activello is now installed and ready to use! Get ready to build something beautiful. We hope you enjoy it! We want to make sure you have the best experience using Activello and that is why we gathered here all the necessary information for you. We hope you will enjoy using Activello, as much as we enjoy creating great products."
 msgstr ""
 
-#: inc/welcome-screen/sections/actions-required.php:101
-msgid "Hooray! There are no required actions for you right now. But you can make your theme more powerful with next actions: "
+#: inc/welcome-screen/sections/getting-started.php:12
+msgid "Step 1 - Add the plugins you need"
 msgstr ""
 
 #: inc/welcome-screen/sections/getting-started.php:13
-msgid "Step 1 - Implement recommended actions"
+msgid "Activello works on its own. These free plugins add a contact form, image galleries, a lightbox and more."
 msgstr ""
 
 #: inc/welcome-screen/sections/getting-started.php:14
-msgid "We've compiled a list of steps for you, to take make sure the experience you'll have using one of our products is very easy to follow."
+msgid "See recommended plugins"
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:17
-msgid "No recommended actions left to perform"
-msgstr ""
-
-#: inc/welcome-screen/sections/getting-started.php:20
-msgid "Check recommended actions"
-msgstr ""
-
-#: inc/welcome-screen/sections/getting-started.php:26
+#: inc/welcome-screen/sections/getting-started.php:18
 msgid "Step 2 - Check our documentation"
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:27
+#: inc/welcome-screen/sections/getting-started.php:19
 msgid "Even if you're a long-time WordPress user, we still believe you should give our documentation a very quick Read."
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:30
+#: inc/welcome-screen/sections/getting-started.php:21
 msgid "Full documentation"
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:35
+#: inc/welcome-screen/sections/getting-started.php:26
 msgid "Step 3 - Customize everything"
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:36
+#: inc/welcome-screen/sections/getting-started.php:27
 msgid "Using the WordPress Customizer you can easily customize every aspect of the theme."
 msgstr ""
 
-#: inc/welcome-screen/sections/getting-started.php:38
+#: inc/welcome-screen/sections/getting-started.php:28
 msgid "Go to Customizer"
 msgstr ""
 
@@ -632,6 +618,14 @@ msgstr ""
 msgid "Install Now"
 msgstr ""
 
+#: inc/welcome-screen/sections/recommended-plugins.php:53
+msgid "Activate"
+msgstr ""
+
+#: inc/welcome-screen/sections/recommended-plugins.php:57
+msgid "Deactivate"
+msgstr ""
+
 #: inc/welcome-screen/sections/recommended-plugins.php:87
 msgid "Active"
 msgstr ""
@@ -641,24 +635,24 @@ msgid "More Details"
 msgstr ""
 
 #. translators: %s: plugin author name
-#: inc/welcome-screen/sections/recommended-plugins.php:106
+#: inc/welcome-screen/sections/recommended-plugins.php:107
 #, php-format
 msgid "By %s"
 msgstr ""
 
-#: inc/welcome-screen/sections/recommended-plugins.php:113
+#: inc/welcome-screen/sections/recommended-plugins.php:115
 msgid "Version:"
 msgstr ""
 
-#: inc/welcome-screen/sections/recommended-plugins.php:118
+#: inc/welcome-screen/sections/recommended-plugins.php:120
 msgid "Installed and active"
 msgstr ""
 
-#: inc/welcome-screen/sections/recommended-plugins.php:120
+#: inc/welcome-screen/sections/recommended-plugins.php:122
 msgid "Installed, not active"
 msgstr ""
 
-#: inc/welcome-screen/sections/recommended-plugins.php:122
+#: inc/welcome-screen/sections/recommended-plugins.php:124
 msgid "Not installed"
 msgstr ""
 
@@ -668,7 +662,7 @@ msgid "Contact Support"
 msgstr ""
 
 #: inc/welcome-screen/sections/support.php:7
-msgid "We offer excellent support through our advanced ticketing system. Make sure to register your purchase before contacting support!"
+msgid "Ask a question or report a problem in the Activello support forum. Activello is free, so there is nothing to register first."
 msgstr ""
 
 #: inc/welcome-screen/sections/support.php:15
@@ -683,90 +677,117 @@ msgstr ""
 msgid "See our full documentation"
 msgstr ""
 
-#: inc/widgets/class-activello-categories.php:9
+#: inc/widgets/class-activello-categories.php:19
 msgid "Activello widget to display categories"
 msgstr ""
 
-#: inc/widgets/class-activello-categories.php:11
+#: inc/widgets/class-activello-categories.php:22
 msgid "Activello Categories"
 msgstr ""
 
-#: inc/widgets/class-activello-categories.php:15
-#: inc/widgets/class-activello-categories.php:70
+#: inc/widgets/class-activello-categories.php:32
+#: inc/widgets/class-activello-categories.php:78
 msgid "Categories"
 msgstr ""
 
-#: inc/widgets/class-activello-categories.php:80
-#: inc/widgets/class-activello-social-widget.php:52
-msgid "Title "
-msgstr ""
-
-#: inc/widgets/class-activello-categories.php:88
-msgid "Limit Categories "
-msgstr ""
-
-#: inc/widgets/class-activello-categories.php:101
-msgid "Enable Posts Count"
-msgstr ""
-
-#: inc/widgets/class-activello-recent-posts.php:9
-msgid "Activello recent posts widget with thumbnails"
-msgstr ""
-
-#: inc/widgets/class-activello-recent-posts.php:11
-msgid "Activello Recent Posts Widget"
-msgstr ""
-
+#: inc/widgets/class-activello-categories.php:83
 #: inc/widgets/class-activello-recent-posts.php:100
+#: inc/widgets/class-activello-social-widget.php:61
 msgid "Title"
 msgstr ""
 
-#: inc/widgets/class-activello-recent-posts.php:108
+#: inc/widgets/class-activello-categories.php:87
+msgid "Limit Categories"
+msgstr ""
+
+#: inc/widgets/class-activello-categories.php:92
+msgid "Enable Posts Count"
+msgstr ""
+
+#: inc/widgets/class-activello-recent-posts.php:19
+msgid "Activello recent posts widget with thumbnails"
+msgstr ""
+
+#: inc/widgets/class-activello-recent-posts.php:22
+msgid "Activello Recent Posts Widget"
+msgstr ""
+
+#: inc/widgets/class-activello-recent-posts.php:104
 msgid "Limit Posts Number"
 msgstr ""
 
-#: inc/widgets/class-activello-social-widget.php:9
+#: inc/widgets/class-activello-social-widget.php:19
 msgid "Activello theme widget to display social media icons"
 msgstr ""
 
-#: inc/widgets/class-activello-social-widget.php:11
+#: inc/widgets/class-activello-social-widget.php:22
 msgid "Activello Social Widget"
 msgstr ""
 
-#: inc/widgets/class-activello-social-widget.php:15
-#: inc/widgets/class-activello-social-widget.php:48
+#: inc/widgets/class-activello-social-widget.php:32
+#: inc/widgets/class-activello-social-widget.php:58
 msgid "Follow us"
+msgstr ""
+
+#. Template Name of the theme
+msgid "Blocks (full width, no title)"
 msgstr ""
 
 #. Template Name of the theme
 msgid "Full-width(no sidebar)"
 msgstr ""
 
+#: patterns/about-author.php
+msgctxt "Pattern title"
+msgid "About the author"
+msgstr ""
+
+#: patterns/about-author.php:15
+msgid "Hello, I am the author of this blog"
+msgstr ""
+
+#: patterns/about-author.php:23
+msgid "Write a few lines about yourself: what you write about, where you are, and why your readers should stay a while. Keep it short and personal."
+msgstr ""
+
+#: patterns/latest-posts-grid.php
+msgctxt "Pattern title"
+msgid "Latest posts grid"
+msgstr ""
+
+#: patterns/latest-posts-grid.php:16
+msgid "Latest from the blog"
+msgstr ""
+
+#: patterns/newsletter-call-to-action.php
+msgctxt "Pattern title"
+msgid "Call to action"
+msgstr ""
+
+#: patterns/newsletter-call-to-action.php:15
+msgid "Never miss a new post"
+msgstr ""
+
+#: patterns/newsletter-call-to-action.php:19
+msgid "One email when something new is published. No spam, and you can unsubscribe at any time."
+msgstr ""
+
+#: patterns/newsletter-call-to-action.php:24
+msgid "Subscribe"
+msgstr ""
+
 #. translators: %s: search query
-#: search.php:18
+#: search.php:19
 #, php-format
 msgid "Search Results for: %s"
 msgstr ""
 
-#: searchform.php:11
-msgid "Search for:"
-msgstr ""
-
-#: searchform.php:12
+#: searchform.php:14
 msgctxt "placeholder"
 msgid "Search&hellip;"
 msgstr ""
 
-#: searchform.php:12
-msgctxt "label"
-msgid "Search for:"
-msgstr ""
-
-#: searchform.php:14
-msgid "Search"
-msgstr ""
-
-#: sidebar.php:40
+#: sidebar.php:32
 msgid "Meta"
 msgstr ""
 
@@ -775,16 +796,16 @@ msgid "Nothing Found"
 msgstr ""
 
 #. translators: %1$s: URL of the new-post screen
-#: template-parts/content-none.php:26
+#: template-parts/content-none.php:27
 #, php-format
 msgid "Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
 msgstr ""
 
-#: template-parts/content-none.php:32
+#: template-parts/content-none.php:34
 msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
 msgstr ""
 
-#: template-parts/content-none.php:37
+#: template-parts/content-none.php:39
 msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
 msgstr ""
 
@@ -795,23 +816,48 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: template-parts/content-single.php:60
-#: template-parts/content.php:97
+#: template-parts/content-single.php:62
+#: template-parts/content.php:99
 msgid "No comments yet"
 msgstr ""
 
-#: template-parts/content-single.php:60
+#: template-parts/content-single.php:62
 msgid "Comment (1)"
 msgstr ""
 
-#: template-parts/content-single.php:60
+#: template-parts/content-single.php:62
 msgid "Comments (%)"
 msgstr ""
 
-#: template-parts/content.php:97
+#: template-parts/content.php:99
 msgid "1 Comment"
 msgstr ""
 
-#: template-parts/content.php:97
+#: template-parts/content.php:99
 msgid "% Comments"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Accent"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Social icons"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Social icons hover"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Body text"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Dark grey"
 msgstr ""

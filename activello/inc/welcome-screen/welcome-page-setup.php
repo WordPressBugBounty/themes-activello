@@ -1,21 +1,19 @@
 <?php
 /**
- * Welcome Page Setup
+ * About Activello screen setup.
  *
- * Note: the Epsilon-powered "Recomended Actions" and "Pro" Customizer sections
- * were removed along with the Epsilon framework in 1.6.0. The same content
- * (recommended plugins, documentation links) lives on the About Activello
- * screen under Appearance.
+ * @package activello
  */
 
-// Include the Activello_Welcome class
 require_once get_template_directory() . '/inc/welcome-screen/class-activello-welcome.php';
 
-// Initialize the welcome screen
 if ( is_admin() ) {
-	global $activello_required_actions, $activello_recommended_plugins;
+	global $activello_recommended_plugins;
 
-	// Define recommended plugins
+	/*
+	 * Plugins offered on the Recommended Plugins tab, keyed by wordpress.org
+	 * slug. Kept as a global so a child theme can change the list.
+	 */
 	$activello_recommended_plugins = array(
 		'kali-forms'                       => array( 'recommended' => true ),
 		'modula-best-grid-gallery'         => array( 'recommended' => true ),
@@ -27,15 +25,5 @@ if ( is_admin() ) {
 		'rsvp'                             => array( 'recommended' => false ),
 	);
 
-	/*
-	 * Required actions used to push the WordPress/widget importers via the
-	 * MT_Notify_System checks, which keyed off widget areas and demo posts this
-	 * theme never shipped -- so the "required" badge nagged forever. The
-	 * importers are only useful during a demo import, so the list is now empty
-	 * and the importers can be installed from the demo documentation instead.
-	 */
-	$activello_required_actions = array();
-
-	// Initialize the welcome screen
-	new Activello_Welcome();
+	Activello_Welcome::get_instance();
 }

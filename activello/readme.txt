@@ -1,67 +1,110 @@
-# About Theme
+=== Activello ===
+Contributors: colorlib, silkalns
+Tags: blog, e-commerce, custom-background, custom-colors, custom-logo, custom-menu, editor-style, featured-images, full-width-template, left-sidebar, right-sidebar, sticky-post, theme-options, threaded-comments, translation-ready, block-styles, wide-blocks
+Requires at least: 6.4
+Tested up to: 7.1
+Requires PHP: 7.4
+Stable tag: 1.7.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-* Theme Name: Activello
-* Theme URI: https://colorlib.com/wp/Activello/
-* Version: 1.6.2
-* Tested up to: WP 7.0
+A clean, minimal blog theme with a full-width featured slider, four layouts and WooCommerce support.
 
-```
-* Author: Colorlib
-* Author URI: https://colorlib.com/
-* License: GNU General Public License v2 or later
-* License URI: http://www.gnu.org/licenses/gpl-2.0.html
-* Activello theme, Copyright 2015-2026 Colorlib
-* Activello WordPress theme is distributed under the terms of the GNU GPL
-* Activello is based on Underscores https://underscores.me/, (C) 2012-2026 Automattic, Inc.
-```
+== Description ==
 
----
+Activello is a clean and minimal WordPress blog theme with a premium look and feel, well suited for food, fashion, travel, lifestyle and any other beautiful blog. It ships a full-width featured slider, a widgetized sidebar, four layout options you can set globally or per post, and Customizer options for colours, header and footer with live preview. The front end is responsive and built on Bootstrap 3, the theme's own JavaScript runs without jQuery, and the colours you choose carry into the block editor. Activello is WooCommerce ready, translation ready and comes with over twenty bundled translations.
 
-## Credits
-Unless otherwise specified, all the theme files, scripts and images are licensed under GPLv2 license
+Documentation: https://colorlib.com/wp/support/activello/
 
-Activello theme uses:
-* FontAwesome (https://fontawesome.com/) licensed under the SIL OFL 1.1 (https://scripts.sil.org/OFL)
-* Bootstrap 3.4.1 and GLYPHICONS Halflings (http://getbootstrap.com/) licensed under MIT license (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-* WP-Bootstrap-NavWalker licensed under the GPLv2 license (https://www.gnu.org/licenses/gpl-2.0.html)
-* FlexSlider 2.7.0 by WooThemes licensed under the GPLv2 license (https://www.gnu.org/licenses/gpl-2.0.html)
-* Unless otherwise specified, all images are created by Colorlib
+Support forum: https://colorlib.com/wp/forums/forum/activello/
 
-### Description
+== Installation ==
 
-Activello is a clean and minimal WordPress blog theme with premium look and feel well suited for food, fashion, travel, lifestyle, sports and any other awesome blogs. This theme features WooCommerce integration that allows you to create fully functional eCommerce website side by side with your blog. This theme has several customization options that are available WordPress Theme Customizer. Theme is also multilingual ready and translated in several languages. This awesome blog theme is also SEO friendly helping you to achieve the highest positions on Google. Activello is the only WordPress blog theme you will ever need.
+1. In your admin panel, go to Appearance > Themes and click Add New Theme.
+2. Search for "Activello", then click Install and Activate.
+3. Open Appearance > About Activello for the getting-started steps, and Appearance > Customize > Activello Options to set the slider, layout and colours.
 
-For questions, comments or bug reports, visit Colorlib support forum (http://colorlib.com/wp/forums).
+== Frequently Asked Questions ==
 
-### Installation
+= How do I turn on the featured slider? =
 
-You can install the theme through the WordPress installer under "Themes" > "Install themes" by searching for "Activello".
+Go to Appearance > Customize > Activello Options > Slider Options and switch on Show Slider. It shows posts with a featured image, optionally from one category, on the front page and the blog page.
 
-Alternatively you can download the file, unzip it and move the unzipped contents to the "wp-content/themes" folder of your WordPress installation. You will then be able to activate the theme.
+= How do I show social icons? =
 
-Afterwards you can continue theme setup and customization via WordPress Dashboard - Appearance - Theme Options. For detailed theme documentation, please visit http://colorlib.com/wp/support/activello
+Create a menu with links to your profiles (Twitter/X, Facebook, Instagram, GitHub, Bluesky, Mastodon and more are recognised) and assign it to the Social Menu location. The icons appear in the footer and in the Activello Social widget.
 
-### Theme Features
+= How do I change the layout of one post or page? =
 
-* Bootstrap 3 integration
-* Responsive design
-* Unlimited color variations
-* SEO friendly
-* WordPress Customizer
-* Image centric approach
-* Internationalized & localization
-* Drop-down Menu
-* Cross-browser compatibility
-* Threaded Comments
-* Gravatar ready
-* Featured slider
-* Font Awesome icons
+Use the layout box in the post editor's sidebar. It overrides the default set under Activello Options > Layout Options.
 
-### Documentation
+== Copyright ==
 
-Theme documentation is available on https://colorlib.com/wp/support/activello
+Activello WordPress Theme, Copyright 2015-2026 Colorlib
+Activello is distributed under the terms of the GNU GPL v2 or later.
 
-#### Changelog
+Activello is based on Underscores https://underscores.me/, (C) 2012-2026 Automattic, Inc.
+Underscores is distributed under the terms of the GNU GPL v2 or later.
+
+This theme bundles the following third-party resources:
+
+Bootstrap 3.4.1, Copyright 2011-2019 Twitter, Inc.
+License: MIT
+Source: https://getbootstrap.com/
+The bundled JavaScript carries a small patch for jQuery 4 compatibility, noted in its header.
+
+GLYPHICONS Halflings (bundled with Bootstrap 3)
+License: MIT, as part of Bootstrap
+Source: https://glyphicons.com/
+
+Font Awesome Free 7.3.1, Copyright Fonticons, Inc.
+License: Icons CC BY 4.0, Fonts SIL OFL 1.1, Code MIT
+Source: https://fontawesome.com/
+
+FlexSlider 2.7.0, Copyright WooThemes
+License: GPLv2 or later
+Source: https://github.com/woocommerce/FlexSlider
+
+WP Bootstrap Navwalker, Edward McIntyre
+License: GPLv2 or later
+Source: https://github.com/wp-bootstrap/wp-bootstrap-navwalker
+
+Lora, Copyright The Lora Project Authors
+License: SIL Open Font License 1.1
+Source: https://fonts.google.com/specimen/Lora
+
+Montserrat, Copyright The Montserrat Project Authors
+License: SIL Open Font License 1.1
+Source: https://fonts.google.com/specimen/Montserrat
+
+Maven Pro, Copyright The Maven Pro Project Authors
+License: SIL Open Font License 1.1
+Source: https://fonts.google.com/specimen/Maven+Pro
+
+Unless otherwise specified, all other theme files, including the screenshot and the welcome screen logo, are created by Colorlib and licensed under the GPLv2 or later.
+
+== Changelog ==
+
+= 1.7.0 =
+* Requires WordPress 6.4 and PHP 7.4; tested up to WordPress 7.1 and PHP 8.5
+* Fixed: social menu icons rendered as empty boxes since the Font Awesome 7 update; every network now shows its brand icon (X, Bluesky, Mastodon, Threads, TikTok and more are recognised) and each link has an accessible name
+* Fixed: the mobile menu button, and every plugin using the theme's Bootstrap, broke on jQuery 4 (WordPress without jQuery Migrate)
+* Fixed: menu items set to open in a new tab opened two tabs
+* Fixed: on pages with a sidebar the footer was rendered outside the page wrapper
+* Fixed: a post's own layout was ignored by the body classes; layout logic now has a single source
+* Fixed: the password form lost core's "Invalid password" message and redirect
+* Fixed: a JavaScript error on every in-page link (#comments, #respond)
+* Fixed: theme widgets: unlinked form labels, unescaped titles, Recent Posts skipping posts without text, Categories mangling names with brackets
+* Fixed: recommended plugins with a non-standard main file were offered for installation while already installed
+* Fixed: the Copyright Text field showed empty while the footer printed "Activello"; it now also accepts links
+* Fixed: duplicate ids on search forms and social menus; search and comment fields have labels; email and website fields use the right input types
+* New: theme colours come from a theme.json palette, so a custom accent colour also applies in the block editor and its colour pickers
+* New: the block editor is sized like the column the post renders in, and uses the theme's fonts
+* New: block patterns (About the author, Latest posts grid, Call to action) and a "Blocks (full width, no title)" page template
+* Accessibility: skip link, real buttons for the sub-menu toggles and back to top, one h1 per view, named landmarks, WCAG AA text contrast (the default accent is a slightly deeper purple)
+* Tooling: npm/Composer lint, build and i18n scripts, PHPCS (WordPress-Extra), ESLint and Stylelint at zero warnings, GitHub Actions CI
+* readme.txt now follows the WordPress.org readme format and lists every bundled resource and its licence
+
 = 1.6.2 =
 * Removed KB Support from the recommended plugins. WordPress.org closed it on 2025-04-03 over a security issue
 * Corrected the capitalisation of WordPress in the French and Romanian translation files

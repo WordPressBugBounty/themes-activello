@@ -19,8 +19,8 @@ if ( ! function_exists( 'activello_paging_nav' ) ) :
 			return;
 		}
 		?>
-		<nav class="navigation paging-navigation" role="navigation">
-		<h1 class="screen-reader-text"><?php esc_html_e( 'Posts navigation', 'activello' ); ?></h1>
+		<nav class="navigation paging-navigation" aria-label="<?php esc_attr_e( 'Posts navigation', 'activello' ); ?>">
+		<h2 class="screen-reader-text"><?php esc_html_e( 'Posts navigation', 'activello' ); ?></h2>
 		<div class="nav-links">
 
 			<?php if ( get_next_posts_link() ) : ?>
@@ -52,12 +52,12 @@ if ( ! function_exists( 'activello_post_nav' ) ) :
 			return;
 		}
 		?>
-		<nav class="navigation post-navigation" role="navigation">
-		<h1 class="screen-reader-text"><?php esc_html_e( 'Post navigation', 'activello' ); ?></h1>
+		<nav class="navigation post-navigation" aria-label="<?php esc_attr_e( 'Post navigation', 'activello' ); ?>">
+		<h2 class="screen-reader-text"><?php esc_html_e( 'Post navigation', 'activello' ); ?></h2>
 		<div class="nav-links">
 			<?php
-				previous_post_link( '<div class="nav-previous">%link</div>', _x( '<i class="fa fa-chevron-left"></i> %title', 'Previous post link', 'activello' ) );
-				next_post_link( '<div class="nav-next">%link</div>',     _x( '%title <i class="fa fa-chevron-right"></i>', 'Next post link',     'activello' ) );
+				previous_post_link( '<div class="nav-previous">%link</div>', _x( '<i class="fa-solid fa-chevron-left"></i> %title', 'Previous post link', 'activello' ) );
+				next_post_link( '<div class="nav-next">%link</div>', _x( '%title <i class="fa-solid fa-chevron-right"></i>', 'Next post link', 'activello' ) );
 			?>
 			</div><!-- .nav-links -->
 			</nav><!-- .navigation -->
@@ -76,19 +76,23 @@ if ( ! function_exists( 'activello_posted_on' ) ) :
 			$time_string .= '<time class="updated" datetime="%3$s">%4$s</time>';
 		}
 
-		$time_string = sprintf( $time_string,
+		$time_string = sprintf(
+			$time_string,
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() ),
 			esc_attr( get_the_modified_date( 'c' ) ),
 			esc_html( get_the_modified_date() )
 		);
 
-			printf( '<span class="posted-on">' . __( 'Posted on', 'activello' ) . ' %1$s</span>' . __( 'by', 'activello' ) . ' %2$s',
-				sprintf( '<a href="%1$s" rel="bookmark">%2$s</a>',
+			printf(
+				'<span class="posted-on">' . esc_html__( 'Posted on', 'activello' ) . ' %1$s</span>' . esc_html__( 'by', 'activello' ) . ' %2$s',
+				sprintf(
+					'<a href="%1$s" rel="bookmark">%2$s</a>',
 					esc_url( get_permalink() ),
-					$time_string
+					$time_string // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built above from escaped parts.
 				),
-				sprintf( '<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
+				sprintf(
+					'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
 					esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
 					esc_html( get_the_author() )
 				)
@@ -101,20 +105,22 @@ endif;
  */
 function activello_categorized_blog() {
 
-	$all_the_cool_cats = get_transient( 'all_the_cool_cats' );
+	$all_the_cool_cats = get_transient( 'activello_categories' );
 	if ( false === $all_the_cool_cats ) {
 		// Create an array of all the categories that are attached to posts.
-		$all_the_cool_cats = get_categories( array(
-			'hide_empty' => 1,
-		) );
+		$all_the_cool_cats = get_categories(
+			array(
+				'hide_empty' => 1,
+			)
+		);
 
 		// Count the number of categories that are attached to the posts.
 		$all_the_cool_cats = count( $all_the_cool_cats );
 
-		set_transient( 'all_the_cool_cats', $all_the_cool_cats );
+		set_transient( 'activello_categories', $all_the_cool_cats );
 	}
 
-	if ( '1' != $all_the_cool_cats ) {
+	if ( 1 !== (int) $all_the_cool_cats ) {
 		// This blog has more than 1 category so activello_categorized_blog should return true.
 		return true;
 	} else {
@@ -128,7 +134,7 @@ function activello_categorized_blog() {
  */
 function activello_category_transient_flusher() {
 	// Like, beat it. Dig?
-	delete_transient( 'all_the_cool_cats' );
+	delete_transient( 'activello_categories' );
 }
 add_action( 'edit_category', 'activello_category_transient_flusher' );
-add_action( 'save_post',     'activello_category_transient_flusher' );
+add_action( 'save_post', 'activello_category_transient_flusher' );

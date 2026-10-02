@@ -1,332 +1,151 @@
 <?php
+/**
+ * About Activello screen (Appearance > About Activello).
+ *
+ * @package activello
+ */
 
 /**
  * Welcome Screen Class
  */
 class Activello_Welcome {
 
-	public $activello;
 	/**
-	 * Class properties used by various methods
+	 * The single instance, so the hooks are only registered once.
+	 *
+	 * @var Activello_Welcome|null
 	 */
-	protected $recommended_actions = array();
-	protected $recommended_plugins = array();
-	protected $show_required_actions = array();
-	protected $required_actions = array();
+	private static $instance = null;
+
+	/**
+	 * The active parent theme.
+	 *
+	 * @var WP_Theme
+	 */
+	public $activello;
+
+	/**
+	 * Return the instance, creating it (and registering the hooks) once.
+	 *
+	 * @return Activello_Welcome
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Constructor for the welcome screen
 	 */
 	public function __construct() {
+		$this->activello = wp_get_theme( get_template() );
 
-		$this->activello = wp_get_theme();
+		if ( null !== self::$instance ) {
+			return;
+		}
+		self::$instance = $this;
 
-		/* create dashbord page */
 		add_action( 'admin_menu', array( $this, 'activello_welcome_register_menu' ) );
-
-		/* activation notice */
 		add_action( 'load-themes.php', array( $this, 'activello_activation_admin_notice' ) );
-
-		/* enqueue script and style for welcome screen */
 		add_action( 'admin_enqueue_scripts', array( $this, 'activello_welcome_style_and_scripts' ) );
-
-		/* ajax callback for dismissable required actions */
-		add_action( 'wp_ajax_activello_dismiss_required_action', array(
-			$this,
-			'activello_dismiss_required_action_callback',
-		) );
-
-		add_action( 'wp_ajax_activello_dismiss_recommended_plugins', array(
-			$this,
-			'activello_dismiss_recommended_plugins_callback',
-		) );
-
-		add_action( 'wp_ajax_activello_set_frontpage', array(
-			$this,
-			'activello_set_pages',
-		) );
 	}
-
-	/**
-	 * Look up a published page by title without the deprecated get_page_by_title().
-	 *
-	 * @param string $title Page title to match.
-	 * @return WP_Post|null
-	 */
-	private function get_page_by_title( $title ) {
-		$query = new WP_Query(
-			array(
-				'post_type'              => 'page',
-				'title'                  => $title,
-				'post_status'            => 'publish',
-				'posts_per_page'         => 1,
-				'no_found_rows'          => true,
-				'ignore_sticky_posts'    => true,
-				'update_post_term_cache' => false,
-				'update_post_meta_cache' => false,
-			)
-		);
-
-		return empty( $query->posts ) ? null : $query->posts[0];
-	}
-
-	/**
-	 * AJAX: point the front page at the "Homepage" page and the blog at "Blog".
-	 *
-	 * Only ever runs for an authenticated user who can manage options and who
-	 * presents a valid nonce.
-	 */
-	public function activello_set_pages() {
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( esc_html__( 'You are not allowed to do that.', 'activello' ), 403 );
-		}
-
-		check_ajax_referer( 'activello_welcome_nonce', 'nonce' );
-
-		$about = $this->get_page_by_title( 'Homepage' );
-		$blog  = $this->get_page_by_title( 'Blog' );
-
-		if ( ! $about instanceof WP_Post ) {
-			wp_send_json_error( esc_html__( 'No page titled "Homepage" was found.', 'activello' ), 404 );
-		}
-
-		update_option( 'page_on_front', $about->ID );
-		update_option( 'show_on_front', 'page' );
-
-		if ( $blog instanceof WP_Post ) {
-			update_option( 'page_for_posts', $blog->ID );
-		}
-
-		wp_send_json_success( 'success' );
-	}
-
-	/**
-	 * Note: activello_activate_plugin() and activello_deactivate_plugin() were removed.
-	 *
-	 * They were hooked to admin_init and acted on ?action=activate_plugin /
-	 * ?action=deactivate_plugin. Nothing in the theme ever generated those links:
-	 * the recommended-plugins tab builds its buttons with create_action_link(),
-	 * which points at core's plugins.php/update.php using core's own nonces. The
-	 * methods were unreachable dead code and pure attack surface (the deactivate
-	 * path edited the active_plugins option directly, bypassing deactivation
-	 * hooks), so they have been deleted rather than patched.
-	 */
 
 	/**
 	 * Creates the dashboard page
 	 *
-	 * @see   add_theme_page()
-	 * @since 1.8.2.4
+	 * @see add_theme_page()
 	 */
 	public function activello_welcome_register_menu() {
-		$action_count = $this->count_actions();
-		$title        = $action_count > 0 ? 'About Activello <span class="badge-action-count">' . esc_html( $action_count ) . '</span>' : 'About Activello';
-
-		add_theme_page( 'About Activello', $title, 'edit_theme_options', 'activello-welcome', array(
-			$this,
-			'activello_welcome_screen',
-		) );
+		add_theme_page(
+			esc_html__( 'About Activello', 'activello' ),
+			esc_html__( 'About Activello', 'activello' ),
+			'edit_theme_options',
+			'activello-welcome',
+			array( $this, 'activello_welcome_screen' )
+		);
 	}
 
 	/**
 	 * Adds an admin notice upon successful activation.
-	 *
-	 * @since 1.8.2.4
 	 */
 	public function activello_activation_admin_notice() {
-		global $pagenow;
-
-		if ( is_admin() && ( 'themes.php' == $pagenow ) && isset( $_GET['activated'] ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core's own redirect flag after switching themes; nothing is changed.
+		if ( isset( $_GET['activated'] ) && current_user_can( 'edit_theme_options' ) ) {
 			add_action( 'admin_notices', array( $this, 'activello_welcome_admin_notice' ), 99 );
 		}
 	}
 
 	/**
 	 * Display an admin notice linking to the welcome screen
-	 *
-	 * @since 1.8.2.4
 	 */
 	public function activello_welcome_admin_notice() {
 		?>
 		<div class="updated notice is-dismissible">
-			<p><?php
-			/* translators: 1: opening link tag to the welcome page, 2: closing link tag */
-			echo sprintf( esc_html__( 'Welcome! Thank you for choosing Activello! To fully take advantage of the best our theme can offer please make sure you visit our %1$swelcome page%2$s.', 'activello' ), '<a href="' . esc_url( admin_url( 'themes.php?page=activello-welcome' ) ) . '">', '</a>' );
-			?></p>
-			<p><a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome' ) ); ?>" class="button"
-				  style="text-decoration: none;"><?php _e( 'Get started with Activello', 'activello' ); ?></a></p>
+			<p>
+				<?php
+				printf(
+					/* translators: 1: opening link tag to the welcome page, 2: closing link tag */
+					esc_html__( 'Welcome! Thank you for choosing Activello! To fully take advantage of the best our theme can offer please make sure you visit our %1$swelcome page%2$s.', 'activello' ),
+					'<a href="' . esc_url( admin_url( 'themes.php?page=activello-welcome' ) ) . '">',
+					'</a>'
+				);
+				?>
+			</p>
+			<p><a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome' ) ); ?>" class="button" style="text-decoration: none;"><?php esc_html_e( 'Get started with Activello', 'activello' ); ?></a></p>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Load welcome screen css and javascript
+	 * Load the welcome screen's stylesheet, on that screen only.
 	 *
-	 * @since  1.8.2.4
+	 * @param string $hook_suffix The current admin page.
 	 */
 	public function activello_welcome_style_and_scripts( $hook_suffix ) {
-
-		$screen = get_current_screen();
-
-		wp_enqueue_style( 'activello-welcome-screen-css', get_template_directory_uri() . '/inc/welcome-screen/css/welcome.css', array(), $this->activello['Version'] );
-
-		if ( 'customize' != $screen->base ) {
-			wp_enqueue_script( 'activello-welcome-screen-js', get_template_directory_uri() . '/inc/welcome-screen/js/welcome.js', array( 'jquery' ), $this->activello['Version'], true );
-
-			wp_localize_script( 'activello-welcome-screen-js', 'activelloWelcomeScreenObject', array(
-				'nr_actions_required'      => $this->count_actions(),
-				'ajaxurl'                  => admin_url( 'admin-ajax.php' ),
-				'template_directory'       => get_template_directory_uri(),
-				'nonce'                    => wp_create_nonce( 'activello_welcome_nonce' ),
-				'no_required_actions_text' => __( 'Hooray! There are no required actions for you right now.', 'activello' ),
-			) );
+		if ( 'appearance_page_activello-welcome' !== $hook_suffix ) {
+			return;
 		}
 
+		wp_enqueue_style( 'activello-welcome-screen-css', get_template_directory_uri() . '/inc/welcome-screen/css/welcome.css', array(), ACTIVELLO_VERSION );
 	}
 
 	/**
-	 * Dismiss required actions
+	 * Plugin information from wordpress.org, cached for 30 minutes.
 	 *
-	 * @since 1.8.2.4
+	 * @param string $slug Plugin slug.
+	 * @return object|WP_Error
 	 */
-	public function activello_dismiss_required_action_callback() {
-		global $activello_required_actions;
-
-		if ( ! current_user_can( 'edit_theme_options' ) ) {
-			wp_send_json_error( esc_html__( 'You are not allowed to do that.', 'activello' ), 403 );
-		}
-
-		check_ajax_referer( 'activello_welcome_nonce', 'nonce' );
-
-		$action_id = isset( $_GET['id'] ) ? sanitize_key( wp_unslash( $_GET['id'] ) ) : 0;
-		$todo      = isset( $_GET['todo'] ) ? sanitize_key( wp_unslash( $_GET['todo'] ) ) : '';
-		echo esc_html( $action_id ); /* this is needed and it's the id of the dismissable required action */
-		if ( ! empty( $action_id ) ) :
-			/* if the option exists, update the record for the specified id */
-			if ( get_option( 'activello_show_required_actions' ) ) :
-				$activello_show_required_actions = get_option( 'activello_show_required_actions' );
-				if ( ! is_array( $activello_show_required_actions ) ) {
-					$activello_show_required_actions = array();
-				}
-				switch ( $todo ) {
-					case 'add':
-						$activello_show_required_actions[ $action_id ] = true;
-						break;
-					case 'dismiss':
-						$activello_show_required_actions[ $action_id ] = false;
-						break;
-				}
-				update_option( 'activello_show_required_actions', $activello_show_required_actions );
-				/* create the new option,with false for the specified id */
-			else :
-				$activello_show_required_actions_new = array();
-				if ( ! empty( $activello_required_actions ) ) :
-					foreach ( $activello_required_actions as $activello_required_action ) :
-						if ( $activello_required_action['id'] == $action_id ) :
-							$activello_show_required_actions_new[ $activello_required_action['id'] ] = false;
-						else :
-							$activello_show_required_actions_new[ $activello_required_action['id'] ] = true;
-						endif;
-					endforeach;
-					update_option( 'activello_show_required_actions', $activello_show_required_actions_new );
-				endif;
-			endif;
-		endif;
-		die(); // this is required to return a proper result
-	}
-
-	public function activello_dismiss_recommended_plugins_callback() {
-		if ( ! current_user_can( 'edit_theme_options' ) ) {
-			wp_send_json_error( esc_html__( 'You are not allowed to do that.', 'activello' ), 403 );
-		}
-
-		check_ajax_referer( 'activello_welcome_nonce', 'nonce' );
-
-		$action_id = isset( $_GET['id'] ) ? sanitize_key( wp_unslash( $_GET['id'] ) ) : 0;
-		$todo      = isset( $_GET['todo'] ) ? sanitize_key( wp_unslash( $_GET['todo'] ) ) : '';
-		echo esc_html( $action_id ); /* this is needed and it's the id of the dismissable required action */
-		if ( ! empty( $action_id ) ) :
-			/* if the option exists, update the record for the specified id */
-			$activello_show_recommended_plugins = get_option( 'activello_show_recommended_plugins' );
-			if ( ! is_array( $activello_show_recommended_plugins ) ) {
-				$activello_show_recommended_plugins = array();
-			}
-			switch ( $todo ) {
-				case 'add':
-					$activello_show_recommended_plugins[ $action_id ] = true;
-					break;
-				case 'dismiss':
-					$activello_show_recommended_plugins[ $action_id ] = false;
-					break;
-			}
-				update_option( 'activello_show_recommended_plugins', $activello_show_recommended_plugins );
-			/* create the new option,with false for the specified id */
-		endif;
-		die(); // this is required to return a proper result
-	}
-
-	/**
-	 *
-	 */
-	public function count_actions() {
-		global $activello_required_actions;
-
-		if ( ! is_array( $activello_required_actions ) ) {
-			return 0;
-		}
-
-		$activello_show_required_actions = get_option( 'activello_show_required_actions' );
-		if ( ! is_array( $activello_show_required_actions ) ) {
-			$activello_show_required_actions = array();
-		}
-
-		$i = 0;
-		foreach ( $activello_required_actions as $action ) {
-			$true      = false;
-			$dismissed = false;
-
-			if ( ! $action['check'] ) {
-				$true = true;
-			}
-
-			if ( ! empty( $activello_show_required_actions ) && isset( $activello_show_required_actions[ $action['id'] ] ) && ! $activello_show_required_actions[ $action['id'] ] ) {
-				$true = false;
-			}
-
-			if ( $true ) {
-				$i ++;
-			}
-		}
-
-		return $i;
-	}
-
 	public function call_plugin_api( $slug ) {
-		include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' );
+		include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 		$call_api = get_transient( 'activello_plugin_information_transient_' . $slug );
 		if ( false === $call_api ) {
-			$call_api = plugins_api( 'plugin_information', array(
-				'slug'   => $slug,
-				'fields' => array(
-					'downloaded'        => false,
-					'rating'            => false,
-					'description'       => false,
-					'short_description' => true,
-					'donate_link'       => false,
-					'tags'              => false,
-					'sections'          => true,
-					'homepage'          => true,
-					'added'             => false,
-					'last_updated'      => false,
-					'compatibility'     => false,
-					'tested'            => false,
-					'requires'          => false,
-					'downloadlink'      => false,
-					'icons'             => true,
-				),
-			) );
-			
+			$call_api = plugins_api(
+				'plugin_information',
+				array(
+					'slug'   => $slug,
+					'fields' => array(
+						'downloaded'        => false,
+						'rating'            => false,
+						'description'       => false,
+						'short_description' => true,
+						'donate_link'       => false,
+						'tags'              => false,
+						'sections'          => true,
+						'homepage'          => true,
+						'added'             => false,
+						'last_updated'      => false,
+						'compatibility'     => false,
+						'tested'            => false,
+						'requires'          => false,
+						'downloadlink'      => false,
+						'icons'             => true,
+					),
+				)
+			);
+
 			if ( ! is_wp_error( $call_api ) ) {
 				set_transient( 'activello_plugin_information_transient_' . $slug, $call_api, 30 * MINUTE_IN_SECONDS );
 			}
@@ -335,29 +154,70 @@ class Activello_Welcome {
 		return $call_api;
 	}
 
+	/**
+	 * The installed plugin file (folder/main-file.php) for a slug, or ''.
+	 *
+	 * The main file is looked up rather than assumed to be {slug}/{slug}.php:
+	 * several recommended plugins use another name (fancybox-for-wordpress
+	 * ships fancybox.php), and those were offered for installation while
+	 * already installed, which then failed with "Destination folder already
+	 * exists". get_plugins() also honours a relocated plugins directory.
+	 *
+	 * @param string $slug Plugin slug.
+	 * @return string
+	 */
+	public function get_plugin_file( $slug ) {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugins = get_plugins( '/' . $slug );
+
+		if ( empty( $plugins ) ) {
+			return '';
+		}
+
+		$files = array_keys( $plugins );
+		$file  = in_array( $slug . '.php', $files, true ) ? $slug . '.php' : $files[0];
+
+		return $slug . '/' . $file;
+	}
+
+	/**
+	 * Whether a plugin is installed and active, and what it needs next.
+	 *
+	 * @param string $slug Plugin slug.
+	 * @return array{status:bool,needs:string}
+	 */
 	public function check_active( $slug ) {
-		if ( file_exists( ABSPATH . 'wp-content/plugins/' . $slug . '/' . $slug . '.php' ) ) {
-			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		$file = $this->get_plugin_file( $slug );
 
-			$needs = is_plugin_active( $slug . '/' . $slug . '.php' ) ? 'deactivate' : 'activate';
-
+		if ( '' === $file ) {
 			return array(
-				'status' => is_plugin_active( $slug . '/' . $slug . '.php' ),
-				'needs' => $needs,
+				'status' => false,
+				'needs'  => 'install',
 			);
 		}
 
+		$active = is_plugin_active( $file );
+
 		return array(
-			'status' => false,
-			'needs' => 'install',
+			'status' => $active,
+			'needs'  => $active ? 'deactivate' : 'activate',
 		);
 	}
 
+	/**
+	 * Best available icon URL from a plugins_api() icons array.
+	 *
+	 * @param array $arr Icons keyed by size.
+	 * @return string
+	 */
 	public function check_for_icon( $arr ) {
-		if ( !$arr || !is_array($arr) ) {
+		if ( ! $arr || ! is_array( $arr ) ) {
 			return '';
 		}
-		
+
 		if ( ! empty( $arr['svg'] ) ) {
 			$plugin_icon_url = $arr['svg'];
 		} elseif ( ! empty( $arr['2x'] ) ) {
@@ -365,120 +225,108 @@ class Activello_Welcome {
 		} elseif ( ! empty( $arr['1x'] ) ) {
 			$plugin_icon_url = $arr['1x'];
 		} else {
-			$plugin_icon_url = isset($arr['default']) ? $arr['default'] : '';
+			$plugin_icon_url = isset( $arr['default'] ) ? $arr['default'] : '';
 		}
 
 		return $plugin_icon_url;
 	}
 
+	/**
+	 * Core install/activate/deactivate URL, with core's own nonce.
+	 *
+	 * @param string $state install, activate or deactivate.
+	 * @param string $slug  Plugin slug.
+	 * @return string
+	 */
 	public function create_action_link( $state, $slug ) {
-		switch ( $state ) {
-			case 'install':
-				return wp_nonce_url(
-					add_query_arg(
-						array(
-							'action' => 'install-plugin',
-							'plugin' => $slug,
-						),
-						network_admin_url( 'update.php' )
+		if ( 'install' === $state ) {
+			return wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'install-plugin',
+						'plugin' => $slug,
 					),
-					'install-plugin_' . $slug
-				);
-				break;
-			case 'deactivate':
-				return add_query_arg( array(
-					'action'        => 'deactivate',
-					'plugin'        => rawurlencode( $slug . '/' . $slug . '.php' ),
-					'plugin_status' => 'all',
-					'paged'         => '1',
-					'_wpnonce'      => wp_create_nonce( 'deactivate-plugin_' . $slug . '/' . $slug . '.php' ),
-				), network_admin_url( 'plugins.php' ) );
-				break;
-			case 'activate':
-				return add_query_arg( array(
-					'action'        => 'activate',
-					'plugin'        => rawurlencode( $slug . '/' . $slug . '.php' ),
-					'plugin_status' => 'all',
-					'paged'         => '1',
-					'_wpnonce'      => wp_create_nonce( 'activate-plugin_' . $slug . '/' . $slug . '.php' ),
-				), network_admin_url( 'plugins.php' ) );
-				break;
+					network_admin_url( 'update.php' )
+				),
+				'install-plugin_' . $slug
+			);
 		}
+
+		if ( ! in_array( $state, array( 'activate', 'deactivate' ), true ) ) {
+			return '';
+		}
+
+		$file = $this->get_plugin_file( $slug );
+
+		return add_query_arg(
+			array(
+				'action'        => $state,
+				'plugin'        => rawurlencode( $file ),
+				'plugin_status' => 'all',
+				'paged'         => '1',
+				'_wpnonce'      => wp_create_nonce( $state . '-plugin_' . $file ),
+			),
+			network_admin_url( 'plugins.php' )
+		);
 	}
 
 	/**
 	 * Welcome screen content
-	 *
-	 * @since 1.8.2.4
 	 */
 	public function activello_welcome_screen() {
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			wp_die( esc_html__( 'You are not allowed to access this page.', 'activello' ) );
 		}
 
-		$allowed    = array( 'getting_started', 'recommended_actions', 'recommended_plugins', 'support' );
+		$tabs = array(
+			'getting_started'     => __( 'Getting Started', 'activello' ),
+			'recommended_plugins' => __( 'Recommended Plugins', 'activello' ),
+			'support'             => __( 'Support', 'activello' ),
+		);
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switch, checked against an allowlist.
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'getting_started';
 
-		if ( ! in_array( $active_tab, $allowed, true ) ) {
+		if ( ! isset( $tabs[ $active_tab ] ) ) {
 			$active_tab = 'getting_started';
 		}
 
 		?>
 
-		<div class="wrap about-wrap epsilon-wrap">
+		<div class="wrap about-wrap activello-welcome">
 
-			<h1><?php echo esc_html( __( 'Welcome to Activello! - Version ', 'activello' ) . $this->activello['Version'] ); ?></h1>
+			<h1>
+				<?php
+				/* translators: %s: theme version */
+				printf( esc_html__( 'Welcome to Activello! - Version %s', 'activello' ), esc_html( $this->activello->get( 'Version' ) ) );
+				?>
+			</h1>
 
-			<div
-				class="about-text"><?php echo esc_html__( 'Activello is now installed and ready to use! Get ready to build something beautiful. We hope you enjoy it! We want to make sure you have the best experience using Activello and that is why we gathered here all the necessary information for you. We hope you will enjoy using Activello, as much as we enjoy creating great products.', 'activello' ); ?></div>
+			<div class="about-text"><?php esc_html_e( 'Activello is now installed and ready to use! Get ready to build something beautiful. We hope you enjoy it! We want to make sure you have the best experience using Activello and that is why we gathered here all the necessary information for you. We hope you will enjoy using Activello, as much as we enjoy creating great products.', 'activello' ); ?></div>
 
-			<div class="wp-badge epsilon-welcome-logo"></div>
+			<div class="wp-badge activello-welcome-logo"></div>
 
-
-			<h2 class="nav-tab-wrapper wp-clearfix">
-				<a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome&tab=getting_started' ) ); ?>"
-				   class="nav-tab <?php echo 'getting_started' == $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Getting Started', 'activello' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome&tab=recommended_plugins' ) ); ?>"
-				   class="nav-tab <?php echo 'recommended_plugins' == $active_tab ? 'nav-tab-active' : ''; ?> "><?php echo esc_html__( 'Recommended Plugins', 'activello' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome&tab=support' ) ); ?>"
-				   class="nav-tab <?php echo 'support' == $active_tab ? 'nav-tab-active' : ''; ?> "><?php echo esc_html__( 'Support', 'activello' ); ?></a>
-			</h2>
+			<nav class="nav-tab-wrapper wp-clearfix" aria-label="<?php esc_attr_e( 'About Activello', 'activello' ); ?>">
+				<?php foreach ( $tabs as $tab => $label ) : ?>
+					<a href="<?php echo esc_url( admin_url( 'themes.php?page=activello-welcome&tab=' . $tab ) ); ?>" class="nav-tab<?php echo $tab === $active_tab ? ' nav-tab-active' : ''; ?>"<?php echo $tab === $active_tab ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
+				<?php endforeach; ?>
+			</nav>
 
 			<?php
 			/*
-			 * The plugin tabs render core's plugin-card markup, which core styles
+			 * The plugin tab renders core's plugin-card markup, which core styles
 			 * for a plain .wrap page. about.css restyles p, h3 and img for
 			 * everything inside .about-wrap and loads after list-tables.css, so
 			 * nesting the cards here inflates their type and blows the card
-			 * heights out. Close .about-wrap after the tab nav and let those tabs
+			 * heights out. Close .about-wrap after the tab nav and let that tab
 			 * render in the context core designed the component for.
 			 */
-			$activello_plugin_tabs = array( 'recommended_plugins', 'recommended_actions' );
-			$activello_bare_wrap   = in_array( $active_tab, $activello_plugin_tabs, true );
-
-			if ( $activello_bare_wrap ) {
+			if ( 'recommended_plugins' === $active_tab ) {
 				echo '</div><div class="wrap activello-welcome-plugins">';
 			}
 
-			switch ( $active_tab ) {
-				case 'getting_started':
-					get_template_part( 'inc/welcome-screen/sections/getting-started' );
-					break;
-				case 'recommended_actions':
-					get_template_part( 'inc/welcome-screen/sections/actions-required' );
-					break;
-				case 'recommended_plugins':
-					get_template_part( 'inc/welcome-screen/sections/recommended-plugins' );
-					break;
-				case 'support':
-					get_template_part( 'inc/welcome-screen/sections/support' );
-					break;
-				default:
-					get_template_part( 'inc/welcome-screen/sections/getting-started' );
-					break;
-			}
+			get_template_part( 'inc/welcome-screen/sections/' . str_replace( '_', '-', $active_tab ) );
 			?>
-
 
 		</div><!--/.wrap.about-wrap-->
 

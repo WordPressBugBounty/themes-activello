@@ -19,6 +19,68 @@ function activello_page_menu_args( $args ) {
 }
 add_filter( 'wp_page_menu_args', 'activello_page_menu_args' );
 
+if ( ! function_exists( 'activello_get_layout' ) ) :
+	/**
+	 * The layout of the current view: pull-right (left sidebar), side-right
+	 * (right sidebar), no-sidebar or full-width.
+	 *
+	 * The single source of truth for header.php, sidebar.php and the body
+	 * classes. A post's or page's own layout (the "site_layout" meta box)
+	 * wins over the Customizer default; the Full-width page template is
+	 * always full width. Each of those places used to work this out on its
+	 * own, and the body class ignored the per-post layout entirely.
+	 *
+	 * @return string
+	 */
+	function activello_get_layout() {
+		$layout = is_singular() ? activello_get_post_layout( get_queried_object_id() ) : activello_get_post_layout( 0 );
+
+		/**
+		 * Filters the layout of the current view.
+		 *
+		 * @param string $layout pull-right, side-right, no-sidebar or full-width.
+		 */
+		return apply_filters( 'activello_layout', $layout );
+	}
+endif;
+
+if ( ! function_exists( 'activello_get_post_layout' ) ) :
+	/**
+	 * The layout a post renders with; 0 for the Customizer default.
+	 *
+	 * Also used by the block editor, which is not a front-end view, so it works
+	 * from the post rather than from conditional tags.
+	 *
+	 * @param int $post_id Post ID, or 0.
+	 * @return string pull-right, side-right, no-sidebar or full-width.
+	 */
+	function activello_get_post_layout( $post_id ) {
+		$layouts = array( 'pull-right', 'side-right', 'no-sidebar', 'full-width' );
+		$layout  = '';
+
+		if ( $post_id ) {
+			$layout = in_array( get_page_template_slug( $post_id ), array( 'page-fullwidth.php', 'page-blocks.php' ), true ) ? 'full-width' : get_post_meta( $post_id, 'site_layout', true );
+		}
+
+		if ( ! in_array( $layout, $layouts, true ) ) {
+			$layout = get_theme_mod( 'activello_sidebar_position', 'side-right' );
+		}
+
+		return in_array( $layout, $layouts, true ) ? $layout : 'side-right';
+	}
+endif;
+
+if ( ! function_exists( 'activello_show_sidebar' ) ) :
+	/**
+	 * Whether the current view shows the sidebar.
+	 *
+	 * @return bool
+	 */
+	function activello_show_sidebar() {
+		return ! in_array( activello_get_layout(), array( 'no-sidebar', 'full-width' ), true );
+	}
+endif;
+
 /**
  * Adds custom classes to the array of body classes.
  *
@@ -31,18 +93,25 @@ function activello_body_classes( $classes ) {
 		$classes[] = 'group-blog';
 	}
 
-	if ( get_theme_mod( 'activello_sidebar_position' ) == 'pull-right' ) {
+	// From the layout in use, so a post's own layout is reflected too.
+	$layout = activello_get_layout();
+	if ( 'pull-right' === $layout ) {
 		$classes[] = 'has-sidebar-left';
-	} elseif ( get_theme_mod( 'activello_sidebar_position' ) == 'no-sidebar' ) {
+	} elseif ( 'no-sidebar' === $layout ) {
 		$classes[] = 'has-no-sidebar';
-	} elseif ( get_theme_mod( 'activello_sidebar_position' ) == 'full-width' ) {
+	} elseif ( 'full-width' === $layout ) {
 		$classes[] = 'has-full-width';
 	} else {
 		$classes[] = 'has-sidebar-right';
 	}
 
+	// Custom Customizer colours switch on the extra rules at the end of style.css.
+	foreach ( array_keys( activello_custom_colors() ) as $slug ) {
+		$classes[] = 'activello-custom-' . $slug;
+	}
+
 	$blog_layout = get_theme_mod( 'activello_blog_layout', 'default' );
-	if ( is_home() && 'default' == $blog_layout ) {
+	if ( is_home() && 'default' === $blog_layout ) {
 		$classes[] = 'half-posts';
 	}
 
@@ -55,7 +124,7 @@ add_filter( 'body_class', 'activello_body_classes' );
 add_filter( 'the_title', 'activello_title' );
 
 function activello_title( $title ) {
-	if ( '' == $title ) {
+	if ( '' === (string) $title ) {
 		return __( 'Untitled', 'activello' );
 	} else {
 		return $title;
@@ -63,21 +132,43 @@ function activello_title( $title ) {
 }
 
 /**
- * Password protected post form using Boostrap classes
+ * Password protected post form using Bootstrap classes
  */
-add_filter( 'the_password_form', 'activello_custom_password_form' );
+add_filter( 'the_password_form', 'activello_custom_password_form', 10, 3 );
 
-function activello_custom_password_form() {
-	global $post;
+/**
+ * Replace core's password form with a Bootstrap input group.
+ *
+ * @param string       $output           Core's form, replaced.
+ * @param WP_Post|null $post             Post being unlocked (WordPress 5.8+).
+ * @param string       $invalid_password Error for a wrong password (WordPress 6.8+).
+ * @return string
+ */
+function activello_custom_password_form( $output = '', $post = null, $invalid_password = '' ) {
+	$post  = get_post( $post );
 	$label = 'pwbox-' . ( empty( $post->ID ) ? wp_rand() : $post->ID );
-	$o = '<form class="protected-post-form" action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" method="post">
+	$error = '';
+	$aria  = '';
+
+	if ( '' !== $invalid_password ) {
+		$error = '<div class="post-password-form-invalid-password" role="alert"><p id="error-' . esc_attr( $label ) . '">' . esc_html( $invalid_password ) . '</p></div>';
+		$aria  = ' aria-describedby="error-' . esc_attr( $label ) . '"';
+	}
+
+	/*
+	 * Core sends the visitor back here after a wrong password. Without it they
+	 * landed on the referring page and never saw the "Invalid password" notice.
+	 */
+	$redirect = empty( $post->ID ) ? '' : '<input type="hidden" name="redirect_to" value="' . esc_attr( get_permalink( $post->ID ) ) . '" />';
+
+	$o = '<form class="protected-post-form post-password-form" action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" method="post">' . $redirect . $error . '
 			<div class="row">
 				<div class="col-lg-10">
-					<p>' . esc_html__( 'This post is password protected. To view it please enter your password below:' ,'activello' ) . '</p>
-					<label for="' . esc_attr( $label ) . '">' . esc_html__( 'Password:' ,'activello' ) . ' </label>
+					<p>' . esc_html__( 'This post is password protected. To view it please enter your password below:', 'activello' ) . '</p>
+					<label for="' . esc_attr( $label ) . '">' . esc_html__( 'Password:', 'activello' ) . ' </label>
 					<div class="input-group">
-						<input class="form-control" name="post_password" id="' . esc_attr( $label ) . '" type="password">
-						<span class="input-group-btn"><button type="submit" class="btn btn-default" name="submit" id="searchsubmit" value="' . esc_attr__( 'Submit','activello' ) . '">' . esc_html__( 'Submit' ,'activello' ) . '</button></span>
+						<input class="form-control" name="post_password" id="' . esc_attr( $label ) . '" type="password" spellcheck="false" required' . $aria . '>
+						<span class="input-group-btn"><button type="submit" class="btn btn-default" name="Submit">' . esc_html__( 'Submit', 'activello' ) . '</button></span>
 					</div>
 				</div>
 			</div>
@@ -91,6 +182,26 @@ function activello_add_custom_table_class( $content ) {
 	return str_replace( '<table>', '<table class="table table-hover">', $content );
 }
 
+if ( ! function_exists( 'activello_site_name' ) ) :
+	/**
+	 * The custom logo, or the linked site title, as the "Show" option asks.
+	 *
+	 * Used by header.php and by the Customizer's live preview of the title.
+	 */
+	function activello_site_name() {
+		$header_show = get_theme_mod( 'header_show', 'logo-text' );
+		$show_logo   = ! in_array( $header_show, array( 'title-only', 'title-text' ), true );
+
+		if ( $show_logo && has_custom_logo() ) {
+			the_custom_logo();
+			return;
+		}
+		?>
+		<a class="navbar-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
+		<?php
+	}
+endif;
+
 if ( ! function_exists( 'activello_header_menu' ) ) :
 	/**
  * Header menu (should you choose to use one)
@@ -98,15 +209,18 @@ if ( ! function_exists( 'activello_header_menu' ) ) :
 	function activello_header_menu() {
 
 		// display the WordPress Custom Menu if available
-		wp_nav_menu( array(
-			'menu'              => 'primary',
-			'theme_location'    => 'primary',
-			'container'         => 'div',
-			'container_class'   => 'collapse navbar-collapse navbar-ex1-collapse',
-			'menu_class'        => 'nav navbar-nav',
-			'fallback_cb'       => 'Activello_Wp_Bootstrap_Navwalker::fallback',
-			'walker'            => new Activello_Wp_Bootstrap_Navwalker(),
-		));
+		wp_nav_menu(
+			array(
+				'menu'            => 'primary',
+				'theme_location'  => 'primary',
+				'container'       => 'div',
+				'container_id'    => 'activello-primary-menu',
+				'container_class' => 'collapse navbar-collapse navbar-ex1-collapse',
+				'menu_class'      => 'nav navbar-nav',
+				'fallback_cb'     => 'Activello_Wp_Bootstrap_Navwalker::fallback',
+				'walker'          => new Activello_Wp_Bootstrap_Navwalker(),
+			)
+		);
 	}
 endif;
 
@@ -115,46 +229,48 @@ if ( ! function_exists( 'activello_featured_slider' ) ) :
  * Featured image slider, displayed on front page for static page and blog
  */
 	function activello_featured_slider() {
-		if ( ( is_home() || is_front_page() ) && get_theme_mod( 'activello_featured_hide' ) == 1 ) {
+		if ( ( is_home() || is_front_page() ) && get_theme_mod( 'activello_featured_hide' ) ) {
 
-			wp_enqueue_style( 'flexslider-css' );
-			wp_enqueue_script( 'flexslider-js' );
+			wp_enqueue_style( 'activello-flexslider-css' );
+			wp_enqueue_script( 'activello-flexslider-js' );
 			wp_enqueue_script( 'activello-flexslider' );
 
 			echo '<div class="flexslider">';
 			echo '<ul class="slides">';
 
-			$slidecat = get_theme_mod( 'activello_featured_cat' );
-			$slidelimit = get_theme_mod( 'activello_featured_limit', -1 );
+			$slidecat    = get_theme_mod( 'activello_featured_cat' );
+			$slidelimit  = get_theme_mod( 'activello_featured_limit', -1 );
 			$slider_args = array(
-				'cat' => $slidecat,
+				'cat'            => $slidecat,
 				'posts_per_page' => $slidelimit,
-				'meta_query' => array(
+				'meta_query'     => array(
 					array(
-						'key' => '_thumbnail_id',
+						'key'     => '_thumbnail_id',
 						'compare' => 'EXISTS',
 					),
 				),
 			);
-			$query = new WP_Query( $slider_args );
+			$query       = new WP_Query( $slider_args );
 			if ( $query->have_posts() ) :
 
-				while ( $query->have_posts() ) : $query->the_post();
+				while ( $query->have_posts() ) :
+					$query->the_post();
 					if ( ( function_exists( 'has_post_thumbnail' ) ) && ( has_post_thumbnail() ) ) :
 						echo '<li>';
-						if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'photon' ) ) {
-							$feat_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' );
-							$args = array(
-								'resize' => '1920,550',
-							);
-							$photon_url = jetpack_photon_url( $feat_image_url[0], $args );
-							echo '<img src="' . esc_url( $photon_url ) . '">';
+						$feat_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' );
+						if ( $feat_image_url && function_exists( 'jetpack_photon_url' ) && class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'photon' ) ) {
+							// Jetpack's image CDN crops to the slider size. The image
+							// had no alt text and no dimensions.
+							$photon_url = jetpack_photon_url( $feat_image_url[0], array( 'resize' => '1920,550' ) );
+							$alt        = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );
+							echo '<img src="' . esc_url( $photon_url ) . '" width="1920" height="550" alt="' . esc_attr( $alt ) . '">';
 						} else {
-							  echo get_the_post_thumbnail( get_the_ID(), 'activello-slider' );
+								echo get_the_post_thumbnail( get_the_ID(), 'activello-slider' );
 						}
 								echo '<div class="flex-caption">';
-							  echo get_the_category_list();
-						if ( get_the_title() != '' ) { echo '<a href="' . esc_url( get_permalink() ) . '"><h2 class="entry-title">' . esc_html( get_the_title() ) . '</h2></a>';
+								echo get_the_category_list(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core category list markup.
+						if ( '' !== get_the_title() ) {
+							echo '<a href="' . esc_url( get_permalink() ) . '"><h2 class="entry-title">' . esc_html( get_the_title() ) . '</h2></a>';
 						}
 								echo '<div class="read-more"><a href="' . esc_url( get_permalink() ) . '">' . esc_html__( 'Read More', 'activello' ) . '</a></div>';
 								echo '</div>';
@@ -165,7 +281,7 @@ if ( ! function_exists( 'activello_featured_slider' ) ) :
 			endif;
 			echo '</ul>';
 			echo ' </div>';
-		}// End if().
+		}
 	}
 endif;
 
@@ -173,9 +289,8 @@ endif;
  * function to show the footer info, copyright information
  */
 function activello_footer_info() {
-	global $activello_footer_info;
 	/* translators: 1: link to Colorlib, 2: link to WordPress */
-	printf( esc_html__( 'Theme by %1$s Powered by %2$s', 'activello' ) , '<a href="https://colorlib.com/" target="_blank">Colorlib</a>', '<a href="https://wordpress.org/" target="_blank">WordPress</a>' );
+	printf( esc_html__( 'Theme by %1$s Powered by %2$s', 'activello' ), '<a href="https://colorlib.com/" target="_blank">Colorlib</a>', '<a href="https://wordpress.org/" target="_blank">WordPress</a>' );
 }
 
 
@@ -225,14 +340,14 @@ function activello_allow_skype_protocol( $protocols ) {
 	$protocols[] = 'skype';
 	return $protocols;
 }
-add_filter( 'kses_allowed_protocols' , 'activello_allow_skype_protocol' );
+add_filter( 'kses_allowed_protocols', 'activello_allow_skype_protocol' );
 
 /*
  * This display blog description from wp customizer setting.
  */
 function activello_cats() {
-	$cats = array();
-	$cats[0] = 'All';
+	$cats    = array();
+	$cats[0] = __( 'All', 'activello' );
 
 	foreach ( get_categories() as $categories => $category ) {
 		$cats[ $category->term_id ] = $category->name;
@@ -245,53 +360,60 @@ function activello_cats() {
  */
 function activello_cb_comment( $comment, $args, $depth ) {
 
-	if ( 'div' == $args['style'] ) {
-		$tag = 'div';
+	if ( 'div' === $args['style'] ) {
+		$tag       = 'div';
 		$add_below = 'comment';
 	} else {
-		$tag = 'li';
+		$tag       = 'li';
 		$add_below = 'div-comment';
 	}
-?>
-	<<?php echo $tag ?> <?php comment_class( empty( $args['has_children'] ) ? '' : 'parent' ) ?> id="comment-<?php comment_ID() ?>">
-	<?php if ( 'div' != $args['style'] ) : ?>
-		<div id="div-comment-<?php comment_ID() ?>" class="comment-body">
+	?>
+	<<?php echo $tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- 'li' or 'div', set above. ?> <?php comment_class( empty( $args['has_children'] ) ? '' : 'parent' ); ?> id="comment-<?php comment_ID(); ?>">
+	<?php if ( 'div' !== $args['style'] ) : ?>
+		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 	<?php endif; ?>
 
-	<div class="comment-author vcard asdasd">
-		<?php if ( 0 != $args['avatar_size'] ) {
+	<div class="comment-author vcard">
+		<?php
+		if ( 0 !== (int) $args['avatar_size'] ) {
 			echo get_avatar( $comment, $args['avatar_size'] );
-} ?>
+		}
+		?>
 		<?php
 		/* translators: %s: comment author link */
-		printf( __( '<cite class="fn">%s</cite> <span class="says">says:</span>', 'activello' ), get_comment_author_link() );
+		printf( wp_kses_post( __( '<cite class="fn">%s</cite> <span class="says">says:</span>', 'activello' ) ), wp_kses_post( get_comment_author_link( $comment ) ) );
 		?>
 		<?php
 			$comments_reply_args = array(
 				'add_below' => $add_below,
-				'depth' => $depth,
+				'depth'     => $depth,
 				'max_depth' => $args['max_depth'],
 			);
-			comment_reply_link( array_merge( $args, $comments_reply_args ) ); ?>
-		<div class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>">
+			comment_reply_link( array_merge( $args, $comments_reply_args ) );
+			?>
+		<div class="comment-meta commentmetadata"><a href="<?php echo esc_url( get_comment_link( $comment ) ); ?>"><time datetime="<?php echo esc_attr( get_comment_time( 'c' ) ); ?>">
 			<?php
 			/* translators: 1: date, 2: time */
-			printf( __( '%1$s at %2$s', 'activello' ), get_comment_date(), get_comment_time() ); ?></a><?php edit_comment_link( __( 'Edit', 'activello' ), '  ', '' );
+			printf( esc_html__( '%1$s at %2$s', 'activello' ), esc_html( get_comment_date( '', $comment ) ), esc_html( get_comment_time() ) );
+			?>
+			</time></a>
+			<?php
+			edit_comment_link( esc_html__( 'Edit', 'activello' ), '  ', '' );
 			?>
 		</div>
 	</div>
 
-	<?php if ( '0' == $comment->comment_approved ) : ?>
-		<em class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'activello' ); ?></em>
+	<?php if ( '0' === (string) $comment->comment_approved ) : ?>
+		<em class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.', 'activello' ); ?></em>
 		<br />
 	<?php endif; ?>
 
 	<?php comment_text(); ?>
 
-	<?php if ( 'div' != $args['style'] ) : ?>
+	<?php if ( 'div' !== $args['style'] ) : ?>
 		</div>
 	<?php endif; ?>
-<?php
+	<?php
 }
 
 /**
@@ -309,78 +431,95 @@ function activello_css_color( $color ) {
 	return $hex ? $hex : '';
 }
 
+if ( ! function_exists( 'activello_custom_colors' ) ) :
+	/**
+	 * The colour theme mods that hold a valid custom colour, keyed by palette slug.
+	 *
+	 * @return string[]
+	 */
+	function activello_custom_colors() {
+		$mods   = array(
+			'accent_color'       => 'accent',
+			'social_color'       => 'social',
+			'social_hover_color' => 'social-hover',
+		);
+		$colors = array();
+
+		foreach ( $mods as $mod => $slug ) {
+			$color = activello_css_color( get_theme_mod( $mod ) );
+			if ( $color ) {
+				$colors[ $slug ] = $color;
+			}
+		}
+
+		return $colors;
+	}
+endif;
+
+if ( ! function_exists( 'activello_theme_json_customizer_colors' ) ) :
+	/**
+	 * Put the Customizer colours into the theme.json palette.
+	 *
+	 * theme.json is the one source for the theme's colours: style.css and the
+	 * editor styles read its --wp--preset--color--* properties, and the block
+	 * editor's colour pickers show the same swatches. The custom colours used
+	 * to be printed in a second <style> block on the front end only, so the
+	 * editor never saw them and elements outside that block's list kept the
+	 * default purple.
+	 *
+	 * @param WP_Theme_JSON_Data $theme_json The theme's theme.json data.
+	 * @return WP_Theme_JSON_Data
+	 */
+	function activello_theme_json_customizer_colors( $theme_json ) {
+		$overrides = activello_custom_colors();
+
+		if ( empty( $overrides ) ) {
+			return $theme_json;
+		}
+
+		$data    = $theme_json->get_data();
+		$palette = isset( $data['settings']['color']['palette'] ) ? $data['settings']['color']['palette'] : array();
+		// The resolver keys presets by origin; a bare list is the file's own shape.
+		if ( isset( $palette['theme'] ) ) {
+			$palette = $palette['theme'];
+		}
+
+		foreach ( $palette as $i => $entry ) {
+			if ( isset( $entry['slug'], $overrides[ $entry['slug'] ] ) ) {
+				$palette[ $i ]['color'] = $overrides[ $entry['slug'] ];
+			}
+		}
+
+		return $theme_json->update_with(
+			array(
+				'version'  => 2,
+				'settings' => array(
+					'color' => array(
+						'palette' => array_values( $palette ),
+					),
+				),
+			)
+		);
+	}
+endif;
+add_filter( 'wp_theme_json_data_theme', 'activello_theme_json_customizer_colors' );
+
 /**
- * Get custom CSS from Theme setting panel and output in header
+ * Print the legacy "custom_css" theme mod, if a site still has one.
+ *
+ * Versions before core Custom CSS stored it as a theme mod; activello_setup()
+ * migrates it, so this is a fallback. The Customizer colours that used to be
+ * printed here now come from the theme.json palette and style.css.
  */
 if ( ! function_exists( 'get_activello_theme_setting' ) ) {
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- name kept: child themes unhook it.
 	function get_activello_theme_setting() {
+		$custom_css = get_theme_mod( 'custom_css' );
 
-		$accent_color       = activello_css_color( get_theme_mod( 'accent_color' ) );
-		$social_color       = activello_css_color( get_theme_mod( 'social_color' ) );
-		$social_hover_color = activello_css_color( get_theme_mod( 'social_hover_color' ) );
-
-		echo '<style type="text/css">';
-		if ( $accent_color ) {
-			echo 'a:hover, a:focus, article.post .post-categories a:hover, article.post .post-categories a:focus, .entry-title a:hover, .entry-title a:focus, .entry-meta a:hover, .entry-meta a:focus, .entry-footer a:hover, .entry-footer a:focus, .read-more a:hover, .read-more a:focus, .social-icons a:hover, .social-icons a:focus, .flex-caption .post-categories a:hover, .flex-caption .post-categories a:focus, .flex-caption .read-more a:hover, .flex-caption .read-more a:focus, .flex-caption h2:hover, .flex-caption h2:focus-within, .comment-meta.commentmetadata a:hover, .comment-meta.commentmetadata a:focus, .post-inner-content .cat-item a:hover, .post-inner-content .cat-item a:focus, .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, blockquote:before, .navbar-default .navbar-nav > .open > a:focus, .cat-title a, .single .entry-content a, .site-info a:hover, .site-info a:focus {color:' . $accent_color . '}';
-
-			echo 'article.post .post-categories:after, .post-inner-content .cat-item:after, #secondary .widget-title:after, .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {background:' . $accent_color . '}';
-
-			echo '.label-default[href]:hover, .label-default[href]:focus, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, #image-navigation .nav-previous a:hover, #image-navigation .nav-previous a:focus, #image-navigation .nav-next a:hover, #image-navigation .nav-next a:focus, .woocommerce #respond input#submit:hover, .woocommerce #respond input#submit:focus, .woocommerce a.button:hover, .woocommerce a.button:focus, .woocommerce button.button:hover, .woocommerce button.button:focus, .woocommerce input.button:hover, .woocommerce input.button:focus, .woocommerce #respond input#submit.alt:hover, .woocommerce #respond input#submit.alt:focus, .woocommerce a.button.alt:hover, .woocommerce a.button.alt:focus, .woocommerce button.button.alt:hover, .woocommerce button.button.alt:focus, .woocommerce input.button.alt:hover, .woocommerce input.button.alt:focus, .input-group-btn:last-child>.btn:hover, .input-group-btn:last-child>.btn:focus, .scroll-to-top:hover, .scroll-to-top:focus, button, html input[type=button]:hover, html input[type=button]:focus, input[type=reset]:hover, input[type=reset]:focus, .comment-list li .comment-body:after, .page-links a:hover span, .page-links a:focus span, .page-links span, input[type=submit]:hover, input[type=submit]:focus, .comment-form #submit:hover, .comment-form #submit:focus, .tagcloud a:hover, .tagcloud a:focus, .single .entry-content a:hover, .single .entry-content a:focus, .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .dropdown-menu> li> a:hover, .dropdown-menu> li> a:focus, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {background-color:' . $accent_color . '; }';
-
-			echo 'input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="password"]:focus, input[type="search"]:focus, textarea:focus { outline-color: ' . $accent_color . '; }';
-
+		if ( $custom_css ) {
+			// Strip tags so a stored value can never break out of <style>.
+			echo '<style>' . wp_strip_all_tags( $custom_css ) . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS, tags stripped.
 		}
-		if ( $social_color ) {
-			echo '#social a, .header-search-icon { color:' . $social_color . '}';
-		}
-		if ( $social_hover_color ) {
-			echo '#social a:hover, #social a:focus, .header-search-icon:hover, .header-search-icon:focus  { color:' . $social_hover_color . '}';
-		}
-
-		if ( get_theme_mod( 'custom_css' ) ) {
-			// Legacy path: modern versions migrate this mod to core Custom CSS on
-			// setup. Strip tags so a stored value can never break out of <style>.
-			echo wp_strip_all_tags( get_theme_mod( 'custom_css' ) );
-		}
-
-		echo '</style>';
 	}
-} // End if().
+}
 add_action( 'wp_head', 'get_activello_theme_setting', 10 );
-
-/**
- * Adds the URL to the top level navigation menu item
- */
-function activello_add_top_level_menu_url( $atts, $item, $args ) {
-	if ( ! wp_is_mobile() && isset( $args->has_children ) && $args->has_children ) {
-		$atts['href'] = ! empty( $item->url ) ? $item->url : '';
-	}
-	return $atts;
-}
-add_filter( 'nav_menu_link_attributes', 'activello_add_top_level_menu_url', 99, 3 );
-
-/**
- * Makes the top level navigation menu item clickable
- */
-function activello_make_top_level_menu_clickable() {
-	if ( ! wp_is_mobile() ) { ?>
-		<script>
-			document.addEventListener( 'DOMContentLoaded', function () {
-				if ( window.innerWidth < 767 ) {
-					return;
-				}
-				document.querySelectorAll( '.navbar-nav > li.menu-item > a' ).forEach( function ( link ) {
-					link.addEventListener( 'click', function () {
-						if ( link.getAttribute( 'target' ) !== '_blank' ) {
-							window.location = link.getAttribute( 'href' );
-						} else {
-							var win = window.open( link.getAttribute( 'href' ), '_blank' );
-							win.focus();
-						}
-					} );
-				} );
-			} );
-		</script>
-	<?php }
-}
-add_action( 'wp_footer', 'activello_make_top_level_menu_clickable', 1 );

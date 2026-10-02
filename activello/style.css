@@ -4,14 +4,14 @@ Theme URI: https://colorlib.com/wp/themes/activello/
 Author: Colorlib
 Author URI: https://colorlib.com
 Description: Activello is a clean and minimal WordPress blog theme with a premium look and feel, well suited for food, fashion, travel, lifestyle and any other beautiful blog. It ships a full-width featured slider, a widgetized sidebar, four layout options you can set globally or per post, and Customizer options for colours, header and footer with live preview. The front end is fully responsive, built on Bootstrap, and the theme's own JavaScript runs without jQuery. Activello is WooCommerce ready, SEO friendly, translation ready and comes with over twenty bundled translations.
-Version: 1.6.2
-Requires at least: 6.0
-Tested up to: 7.0
-Requires PHP: 7.0
+Version: 1.7.0
+Requires at least: 6.4
+Tested up to: 7.1
+Requires PHP: 7.4
 License: GNU General Public License v2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: activello
-Tags: blog, e-commerce, custom-background, custom-colors, custom-logo, custom-menu, editor-style, featured-images, full-width-template, sticky-post, theme-options, threaded-comments, translation-ready, block-styles, wide-blocks
+Tags: blog, e-commerce, custom-background, custom-colors, custom-logo, custom-menu, editor-style, featured-images, full-width-template, left-sidebar, right-sidebar, sticky-post, theme-options, threaded-comments, translation-ready, block-styles, wide-blocks
 This theme, like WordPress, is licensed under the GPL.
 Use it to make something cool, have fun, and share what you've learned with others.
 Activello theme, Copyright 2015-2026 Colorlib
@@ -48,9 +48,9 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 
 body {
     color: #696969;
-    background-color: #FFFFFF;
+    background-color: #FFF;
     word-wrap: break-word;
-    font-family: 'Lora', serif;
+    font-family: Lora, serif;
     line-height: 2;
     font-size: 14px;
 }
@@ -63,7 +63,7 @@ a {
     transition: all 0.3s;
 }
 a:hover, a:focus {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
     text-decoration: none;
 }
 a:focus {
@@ -72,11 +72,11 @@ a:focus {
     outline-offset: -2px;
 }
 .single .entry-content a {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 .single .entry-content a:hover,
 .single .entry-content a:focus {
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
     color: #fff;
 }
 .single .entry-content .page-links a:hover,
@@ -86,7 +86,7 @@ a:focus {
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: #696969;
     font-weight: 400;
-    font-family: 'Montserrat', sans-serif;
+    font-family: Montserrat, sans-serif;
     margin: 30px 0;
 }
 .container {
@@ -128,7 +128,7 @@ blockquote {
 }
 blockquote:before {
     content: "\201D";
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
     font-size: 80px;
     position: absolute;
     left: 5px;
@@ -145,7 +145,7 @@ img {
     /* Adhere to container width. */
 }
 button, input, select, textarea {
-    font-family: 'Montserrat', sans-serif;
+    font-family: Montserrat, sans-serif;
     font-size: 100%;
     /* Corrects font size not being inherited in all browsers */
     margin: 0;
@@ -182,7 +182,7 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="url"], i
 }
 input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="password"]:focus, input[type="search"]:focus, textarea:focus {
 	color: #111;
-	outline: 1px solid #a161bf;
+	outline: 1px solid var(--wp--preset--color--accent, #964fb8);
 }
 textarea {
     overflow: auto;
@@ -214,14 +214,21 @@ textarea {
 /* Text meant only for screen readers */
 
 .screen-reader-text {
-    clip: rect(1px, 1px, 1px, 1px);
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
     position: absolute !important;
+    width: 1px;
+    word-wrap: normal !important;
 }
-.screen-reader-text:hover, .screen-reader-text:active, .screen-reader-text:focus {
+.screen-reader-text:focus {
     background-color: #f1f1f1;
     border-radius: 3px;
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
-    clip: auto !important;
+    clip-path: none;
     color: #21759b;
     display: block;
     font-size: 14px;
@@ -311,7 +318,11 @@ footer.entry-meta {
 }
 .entry-title {
     color: #444;
-    margin-bottom: 30px;
+    font-family: Lora, serif;
+    font-size: 24px;
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 .page .entry-title {
     margin-bottom: 30px;
@@ -387,9 +398,7 @@ hr.section-divider {
     padding-top: 0;
     padding-bottom: 0;
 }
-.single-view, .blog-item-wrap {}
 .post-inner-content {
-    /*border-bottom: 1px solid #dedede;*/
     padding: 50px 0;
 }
 .archive .post-inner-content {
@@ -404,13 +413,6 @@ article.post:first-child .post-inner-content {
 }
 .entry-header {
     text-align: center;
-}
-.entry-title {
-    font-family: "Lora", serif;
-    font-size: 24px;
-    font-style: italic;
-    margin-top: 0;
-    margin-bottom: 15px;
 }
 .entry-footer {
     margin-top: 20px;
@@ -443,7 +445,7 @@ article.post:first-child .post-inner-content {
     font-weight: 700;
 }
 .comment-author .fn {
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     letter-spacing: 2px;
     font-style: normal;
 }
@@ -463,7 +465,7 @@ article.post:first-child .post-inner-content {
 }
 .cat-title a {
     color: #8e6193;
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     text-transform: uppercase;
 }
 article.post .post-categories, .post-inner-content .cat-item {
@@ -481,11 +483,11 @@ article.post .post-categories:after, .post-inner-content .cat-item:after {
     height: 2px;
     width: 40px;
     margin-left: -20px;
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
 }
 article.post .post-categories a, .post-inner-content .cat-item a {
     color: #696969;
-    font-family: 'Montserrat', sans-serif;
+    font-family: Montserrat, sans-serif;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -581,7 +583,7 @@ article.grid iframe {
 .page-links span {
     display: inline-block;
     color: #fff;
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
     border-radius: 4px;
     padding: 2px 10px;
     margin-left: 2px;
@@ -597,7 +599,7 @@ article.grid iframe {
 }
 .page-links a:hover span,
 .page-links a:focus-within span {
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
     border: none;
     color: #fff;
 }
@@ -605,11 +607,11 @@ article.grid iframe {
     font-size: 12px;
 }
 .pagination li a {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 .pagination li:hover a,
 .pagination li:focus-within a {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 .pagination>.active>a,
 .pagination>.active>span,
@@ -618,8 +620,8 @@ article.grid iframe {
 .pagination>.active>a:focus,
 .pagination>.active>span:focus {
     color: #FFF;
-    background-color: #a161bf;
-    border-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
+    border-color: var(--wp--preset--color--accent, #964fb8);
 }
 .pagination>li>a, .pagination>li>span {
     padding: 9px 14px;
@@ -748,12 +750,12 @@ embed, iframe, object {
     left: 0;
     height: 2px;
     width: 40px;
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
 }
 .widget ul ul {
     padding: 10px;
 }
-.widget #social ul li {
+.widget :is(#social, #social-2, #social-3) ul li {
     border-bottom: 0;
 }
 .not-found-widget {
@@ -814,7 +816,6 @@ ul.children, ul.children li {
     font-style: italic;
     font-size: 16px;
 }
-#secondary .widget .post-content a:hover {}
 .widget .post-content span {
     font-size: 12px;
 }
@@ -829,15 +830,15 @@ ul.children, ul.children li {
     display: inline-block;
     background-color: #f2f2f2;
     letter-spacing: 1px;
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     font-size: 10px !important;
     text-transform: uppercase;
 }
 .tagcloud a:hover,
 .tagcloud a:focus {
-    color: #ffffff!important;
-    background-color: #a161bf;
-    border-color: #a161bf;
+    color: #fff!important;
+    background-color: var(--wp--preset--color--accent, #964fb8);
+    border-color: var(--wp--preset--color--accent, #964fb8);
 }
 #instafeed {
     margin: -5px;
@@ -852,12 +853,12 @@ ul.children, ul.children li {
 /* =Buttons
 ----------------------------------------------- */
 
-.btn-default, .label-default, .woocommerce #respond input#submit, .woocommerce a.button, .woocommerce button.button, .woocommerce input.button, .woocommerce #respond input#submit.alt, .woocommerce a.button.alt, .woocommerce button.button.alt, .woocommerce input.button.alt, .btn.btn-default, button, .input-group-btn:last-child>.btn, input[type=submit] {
+.btn-default, .label-default, .woocommerce #respond input#submit, .woocommerce a.button, .woocommerce button.button, .woocommerce input.button, .woocommerce #respond input#submit.alt, .woocommerce a.button.alt, .woocommerce button.button.alt, .woocommerce input.button.alt, .btn.btn-default, button, .input-group-btn:last-child>.btn, input[type="submit"] {
     background: #f2f2f2;
     border-color: transparent;
     color: #696969;
     display: inline-block;
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     font-size: 12px;
     text-transform: uppercase;
     -webkit-transition: background-color 0.3s linear;
@@ -895,9 +896,9 @@ button:hover,
 button:focus,
 .input-group-btn:last-child>.btn:hover,
 .input-group-btn:last-child>.btn:focus,
-input[type=submit]:hover,
-input[type=submit]:focus {
-    background-color: #a161bf;
+input[type="submit"]:hover,
+input[type="submit"]:focus {
+    background-color: var(--wp--preset--color--accent, #964fb8);
     border-color: transparent;
     color: #fff;
 }
@@ -915,7 +916,7 @@ input[type=submit]:focus {
     text-align: center;
     line-height: 20px;
 }
-.woocommerce #respond input#submit, .woocommerce button.button.alt, .woocommerce button.button, input[type=submit] {
+.woocommerce #respond input#submit, .woocommerce button.button.alt, .woocommerce button.button, input[type="submit"] {
     padding: 0 80px;
     text-align: center;
     line-height: 35px;
@@ -947,14 +948,13 @@ input[type=submit]:focus {
     margin-bottom: 10px;
     border-radius: 4px;
     padding: 20px;
-    background: transparent;
     border: 1px solid #DADADA;
     background: #fff;
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 #infinite-handle span:hover,
 #infinite-handle span:focus-within {
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
     color: #fff;
 }
 
@@ -976,7 +976,7 @@ a.custom-logo-link {
     color: #1c202a;
 }
 .tagline {
-    font-family: 'Montserrat', sans-serif;
+    font-family: Montserrat, sans-serif;
     margin-top: 10px;
     letter-spacing: 1px;
 }
@@ -985,7 +985,7 @@ a.custom-logo-link {
     margin-bottom: 20px;
 }
 .site-description {
-    color: #777;
+    color: #767676;
     font-weight: 200;
     font-size: 16px;
 }
@@ -1004,7 +1004,7 @@ a.custom-logo-link {
         display: none;
     }
 }
-button, html input[type=button], input[type=reset], input[type=submit], .comment-form #submit {
+button, html input[type="button"], input[type="reset"], input[type="submit"], .comment-form #submit {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
@@ -1030,19 +1030,19 @@ article.post .post-categories a:focus,
 .comment-meta.commentmetadata a:focus,
 .post-inner-content .cat-item a:hover,
 .post-inner-content .cat-item a:focus {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 
 button,
-html input[type=button]:hover,
-html input[type=button]:focus,
-input[type=reset]:hover,
-input[type=reset]:focus,
-input[type=submit]:hover,
-input[type=submit]:focus,
+html input[type="button"]:hover,
+html input[type="button"]:focus,
+input[type="reset"]:hover,
+input[type="reset"]:focus,
+input[type="submit"]:hover,
+input[type="submit"]:focus,
 .comment-form #submit:hover,
 .comment-form #submit:focus {
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
     color: #fff;
 }
 div.flex-caption {
@@ -1054,7 +1054,7 @@ div.flex-caption {
 ----------------------------------------------- */
 
 .post-navigation a, .paging-navigation a {
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     font-size: 12px;
     display: block;
     letter-spacing: 1px;
@@ -1088,8 +1088,8 @@ div.flex-caption {
     text-transform: uppercase;
 }
 .navbar.navbar-default {
-    background-color: #ffffff;
-    font-family: 'Montserrat', sans-serif;
+    background-color: #fff;
+    font-family: Montserrat, sans-serif;
     margin-bottom: 0;
     font-weight: 400;
     min-height: auto;
@@ -1115,7 +1115,7 @@ div.flex-caption {
 .navbar-brand {
     display: inline-block;
     float: none;
-    font-family: 'Lora', serif;
+    font-family: Lora, serif;
     color: #DADADA;
     font-size: 30px;
     height: auto;
@@ -1134,16 +1134,16 @@ div.flex-caption {
     border: none;
 }
 .navbar-default .navbar-nav> .active> a, .navbar-default .navbar-nav> .active> a:hover, .navbar-default .navbar-nav> .active> a:focus, .navbar-default .navbar-nav> li> a:hover, .navbar-default .navbar-nav> li> a:focus, .navbar-default .navbar-nav> .open> a, .navbar-default .navbar-nav> .open> a:hover, .navbar-default .navbar-nav> .open> a:focus {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
     background-color: transparent;
 }
 .dropdown-menu> li> a:hover, .dropdown-menu> li> a:focus, .navbar-default .navbar-nav .open .dropdown-menu> li> a:hover, .navbar-default .navbar-nav .open .dropdown-menu> li> a:focus {
     color: #fff;
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
 }
 .dropdown-menu li {
     position: relative;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
 }
 .dropdown-menu > li:last-child {
     border-bottom: 0 none;
@@ -1166,10 +1166,10 @@ div.flex-caption {
 @media (max-width: 768px) {
     .navbar-default .navbar-nav .open .dropdown-menu>.active>a, .navbar-default .navbar-nav .open .dropdown-menu>.active>a:focus, .navbar-default .navbar-nav .open .dropdown-menu>.active>a:hover {
         color: #fff;
-        background-color: #a161bf;
+        background-color: var(--wp--preset--color--accent, #964fb8);
     }
     .navbar-collapse {
-        background: #ffffff;
+        background: #fff;
         float: none;
         position: absolute;
         top: 70px;
@@ -1184,11 +1184,11 @@ div.flex-caption {
 }
 .dropdown-menu {
     box-shadow: none;
-    border: 1px solid #eeeeee !important;
+    border: 1px solid #eee !important;
     font-size: 13px;
 }
 .navbar-default .navbar-nav .current-menu-ancestor a.dropdown-toggle {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
     background-color: transparent;
 }
 .navbar-default .navbar-nav .open .dropdown-menu> li.active> a {
@@ -1221,7 +1221,7 @@ div.flex-caption {
     border: none;
 }
 .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
     color: #fff;
 }
 .dropdown-menu .divider {
@@ -1242,7 +1242,7 @@ div.flex-caption {
     background-color: transparent;
 }
 .navbar-default .navbar-toggle:focus span {
-	background-color: #a161bf;
+	background-color: var(--wp--preset--color--accent, #964fb8);
 }
 .nav.navbar-nav {
     float: left;
@@ -1253,10 +1253,22 @@ div.flex-caption {
 .activello-dropdown {
     display: none;
     padding: 20px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-transform: none;
+}
+.navbar-nav .activello-dropdown:hover,
+.navbar-nav .activello-dropdown:focus {
+    background: transparent;
+    color: inherit;
 }
 .activello-dropdown:after,
 .nav:not(.activello-mobile-menu) li.menu-item-has-children > a:after {
-    font-family:'FontAwesome';
+    font-family:FontAwesome;
     font-size: inherit;
     content: "\f107";
     display: block;
@@ -1409,7 +1421,6 @@ ul.nav ul ul {
 .comment-content a {
     word-wrap: break-word;
 }
-.bypostauthor {}
 #respond {
     background-color: transparent !important;
     box-shadow: none !important;
@@ -1436,7 +1447,7 @@ p.logged-in-as {
     bottom: 0;
     height: 2px;
     width: 40px;
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
     margin-left: -20px;
 }
 .comment-list> li:last-child .comment-body:after {
@@ -1446,7 +1457,7 @@ p.logged-in-as {
     list-style: none;
 }
 .comment .comment-body {
-    background-color: #ffffff;
+    background-color: #fff;
     margin: 0;
     overflow: hidden;
     margin-top: 2em;
@@ -1487,12 +1498,12 @@ p.logged-in-as {
 .comment-reply-link {
     background: #f2f2f2;
     border-radius: 2px;
-    color: #000000;
+    color: #000;
     font-size: 10px;
     margin-left: 20px;
     display: inline-block;
     padding: 4px 10px;
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     text-transform: uppercase;
 }
 .form-allowed-tags code {
@@ -1503,6 +1514,8 @@ p.logged-in-as {
     display: block;
     font-weight: normal;
 }
+/* stylelint-disable-next-line block-no-empty -- the class core adds to the post author's comments, for child themes to style. */
+.bypostauthor {}
 .comment-respond .required {
     color: #C7254E;
 }
@@ -1513,8 +1526,10 @@ p.logged-in-as {
     overflow: hidden;
     margin-top: 30px;
 }
-.comment-form input[type="text"] {
-    border: 1px solid #eeeeee;
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form input[type="url"] {
+    border: 1px solid #eee;
     border-radius: 0;
     height: 35px;
     margin-bottom: 30px;
@@ -1522,7 +1537,7 @@ p.logged-in-as {
     width: 100%;
 }
 .comment-form textarea {
-    border: 1px solid #eeeeee;
+    border: 1px solid #eee;
     border-radius: 0;
     padding: 10px;
     margin-bottom: 30px;
@@ -1540,7 +1555,7 @@ p.logged-in-as {
     margin: 0;
 }
 .comment-meta.commentmetadata a {
-    color: #999;
+    color: #767676;
     font-style: italic;
 }
 @media(max-width:767px) {
@@ -1565,7 +1580,7 @@ p.logged-in-as {
 #image-navigation .nav-previous a:focus,
 #image-navigation .nav-next a:hover,
 #image-navigation .nav-next a:focus {
-    background-color: #a161bf;
+    background-color: var(--wp--preset--color--accent, #964fb8);
     color: #fff;
 }
 #image-navigation .nav-previous, #image-navigation .nav-next {
@@ -1684,7 +1699,7 @@ p.logged-in-as {
 
 #footer-area {
     background-color: #f2f2f2;
-    color: #999;
+    color: #6b6b6b;
 }
 #footer-area .footer-widget-area {
     padding: 40px 0 20px 0;
@@ -1718,7 +1733,7 @@ p.logged-in-as {
     overflow: hidden;
 }
 .copyright {
-    font-family: "Montserrat", sans-serif;
+    font-family: Montserrat, sans-serif;
     margin-top: 10px;
 }
 .copyright, .copyright a {
@@ -1729,14 +1744,14 @@ p.logged-in-as {
     text-align: center;
 }
 .site-info a {
-    color: #777;
+    color: #555;
 }
 .site-info a:hover,
 .site-info a:focus {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 .site-info {
-    color: #999;
+    color: #6b6b6b;
     font-size: 12px;
 }
 .footer-nav.nav> li> a:hover,
@@ -1745,7 +1760,7 @@ p.logged-in-as {
 }
 .scroll-to-top {
     background: #363636;
-    background: rgba(100, 100, 100, 0.4);
+    background: rgba(100, 100, 100, 0.75);
     color: #FFF;
     bottom: 4%;
     cursor: pointer;
@@ -1766,7 +1781,7 @@ p.logged-in-as {
 }
 .scroll-to-top:hover,
 .scroll-to-top:focus {
-    background: #a161bf;
+    background: var(--wp--preset--color--accent, #964fb8);
     opacity: .8;
 }
 @media (max-width: 768px) {
@@ -1781,6 +1796,17 @@ p.logged-in-as {
 /* =Social icons
 ----------------------------------------------- */
 
+:is(#social, #social-2, #social-3) li {
+    display: inline-block;
+}
+:is(#social, #social-2, #social-3) li,
+:is(#social, #social-2, #social-3) ul {
+    border: 0 !important;
+    list-style: none;
+    padding-left: 0;
+    text-align: center;
+}
+
 #secondary .widget .social-icons a {
     margin-right: 20px;
 }
@@ -1792,36 +1818,28 @@ p.logged-in-as {
 #secondary .widget .social-icons {
     text-align: left;
 }
-#social a {
-    color: #696969;
+:is(#social, #social-2, #social-3) a {
+    color: var(--wp--preset--color--social, #696969);
     display: inline-block;
     font-size: 18px;
     list-style: none;
     text-align: center;
 }
-.header-search-icon {
-    -webkit-transition: all 0.3s;
-    -moz-transition: all 0.3s;
-    -o-transition: all 0.3s;
-    transition: all 0.3s;
-}
-#social a:hover,
-#social a:focus {
-    color: #a161bf;
+:is(#social, #social-2, #social-3) a:hover,
+:is(#social, #social-2, #social-3) a:focus {
+    color: var(--wp--preset--color--social-hover, #964fb8);
 }
 .header-search-icon {
     background: transparent;
-    color: #696969;
+    color: var(--wp--preset--color--social, #696969);
+    transition: all 0.3s;
 }
 .header-search-icon:hover,
 .header-search-icon:focus {
     background: transparent;
-    color: #a161bf;
+    color: var(--wp--preset--color--social-hover, #964fb8);
 }
-#social li a span {
-    display: none;
-}
-#footer-area #social a {
+#footer-area :is(#social, #social-2, #social-3) a {
     margin: 0 15px;
 }
 @media (max-width: 992px) {
@@ -1848,7 +1866,7 @@ p.logged-in-as {
 
 .wpcf7 input[type="text"], .wpcf7 input[type="email"], .wpcf7 textarea {
     border-radius: 0;
-    border: 1px solid #eeeeee;
+    border: 1px solid #eee;
     height: 35px;
     padding: 0 10px;
     width: 100%;
@@ -1876,11 +1894,23 @@ p.logged-in-as {
 
 /* Woocommerce */
 
+/* WooCommerce's olive price colour is 3.4:1 on white; body text passes AA. */
+.woocommerce ul.products li.product .price,
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+    color: var(--wp--preset--color--body, #696969);
+}
+
+/* Bootstrap's table caption grey (#777) is just under 4.5:1 on white. */
+caption {
+    color: #767676;
+}
+
 .woocommerce .woocommerce-info {
-    border-top-color: #a161bf;
+    border-top-color: var(--wp--preset--color--accent, #964fb8);
 }
 .woocommerce .woocommerce-info:before {
-    color: #a161bf;
+    color: var(--wp--preset--color--accent, #964fb8);
 }
 .related.products {
     clear: both;
@@ -1896,7 +1926,7 @@ p.logged-in-as {
     clear: left;
 }
 .woocommerce-product-search .search-field,
-.woocommerce-product-search input[type=submit] {
+.woocommerce-product-search input[type="submit"] {
     float: left;
     box-sizing: border-box;
 }
@@ -1909,7 +1939,7 @@ p.logged-in-as {
     line-height: 35px;
 }
 
-.woocommerce-product-search input[type=submit] {
+.woocommerce-product-search input[type="submit"] {
     width: 20%;
     padding: 1px 0;
     border: 0 none;
@@ -1935,4 +1965,157 @@ p.logged-in-as {
     content: "";
     display: block;
     clear: both;
+}
+
+/* =Customizer colours
+----------------------------------------------- */
+
+/*
+ * Extra elements a *custom* Accent / Social colour recolours. The colours
+ * themselves live in the theme.json palette, which the Customizer settings
+ * write into (activello_theme_json_customizer_colors()); these rules only
+ * apply when a colour has been chosen, keyed on the body classes
+ * activello_body_classes() adds, so the default look is untouched.
+ * :where() keeps every selector at its original specificity. WooCommerce
+ * and single posts put .woocommerce / .single on <body>, so those selectors
+ * also have a body-level form.
+ */
+
+:where(.activello-custom-accent) a:hover,
+:where(.activello-custom-accent) a:focus,
+:where(.activello-custom-accent) article.post .post-categories a:hover,
+:where(.activello-custom-accent) article.post .post-categories a:focus,
+:where(.activello-custom-accent) .entry-title a:hover,
+:where(.activello-custom-accent) .entry-title a:focus,
+:where(.activello-custom-accent) .entry-meta a:hover,
+:where(.activello-custom-accent) .entry-meta a:focus,
+:where(.activello-custom-accent) .entry-footer a:hover,
+:where(.activello-custom-accent) .entry-footer a:focus,
+:where(.activello-custom-accent) .read-more a:hover,
+:where(.activello-custom-accent) .read-more a:focus,
+:where(.activello-custom-accent) .social-icons a:hover,
+:where(.activello-custom-accent) .social-icons a:focus,
+:where(.activello-custom-accent) .flex-caption .post-categories a:hover,
+:where(.activello-custom-accent) .flex-caption .post-categories a:focus,
+:where(.activello-custom-accent) .flex-caption .read-more a:hover,
+:where(.activello-custom-accent) .flex-caption .read-more a:focus,
+:where(.activello-custom-accent) .flex-caption h2:hover,
+:where(.activello-custom-accent) .flex-caption h2:focus-within,
+:where(.activello-custom-accent) .comment-meta.commentmetadata a:hover,
+:where(.activello-custom-accent) .comment-meta.commentmetadata a:focus,
+:where(.activello-custom-accent) .post-inner-content .cat-item a:hover,
+:where(.activello-custom-accent) .post-inner-content .cat-item a:focus,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .active > a,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .active > a:hover,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .active > a:focus,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > li > a:hover,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > li > a:focus,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .open > a,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .open > a:hover,
+:where(.activello-custom-accent) blockquote:before,
+:where(.activello-custom-accent) .navbar-default .navbar-nav > .open > a:focus,
+:where(.activello-custom-accent) .cat-title a,
+:where(.activello-custom-accent) .single .entry-content a,
+.single:where(.activello-custom-accent) .entry-content a,
+:where(.activello-custom-accent) .site-info a:hover,
+:where(.activello-custom-accent) .site-info a:focus {
+    color: var(--wp--preset--color--accent);
+}
+:where(.activello-custom-accent) article.post .post-categories:after,
+:where(.activello-custom-accent) .post-inner-content .cat-item:after,
+:where(.activello-custom-accent) #secondary .widget-title:after,
+:where(.activello-custom-accent) .dropdown-menu>.active>a,
+:where(.activello-custom-accent) .dropdown-menu>.active>a:hover,
+:where(.activello-custom-accent) .dropdown-menu>.active>a:focus {
+    background: var(--wp--preset--color--accent);
+}
+:where(.activello-custom-accent) .label-default[href]:hover,
+:where(.activello-custom-accent) .label-default[href]:focus,
+:where(.activello-custom-accent) .btn-default:hover,
+:where(.activello-custom-accent) .btn-default:focus,
+:where(.activello-custom-accent) .btn-default:active,
+:where(.activello-custom-accent) .btn-default.active,
+:where(.activello-custom-accent) #image-navigation .nav-previous a:hover,
+:where(.activello-custom-accent) #image-navigation .nav-previous a:focus,
+:where(.activello-custom-accent) #image-navigation .nav-next a:hover,
+:where(.activello-custom-accent) #image-navigation .nav-next a:focus,
+:where(.activello-custom-accent) .woocommerce #respond input#submit:hover,
+.woocommerce:where(.activello-custom-accent) #respond input#submit:hover,
+:where(.activello-custom-accent) .woocommerce #respond input#submit:focus,
+.woocommerce:where(.activello-custom-accent) #respond input#submit:focus,
+:where(.activello-custom-accent) .woocommerce a.button:hover,
+.woocommerce:where(.activello-custom-accent) a.button:hover,
+:where(.activello-custom-accent) .woocommerce a.button:focus,
+.woocommerce:where(.activello-custom-accent) a.button:focus,
+:where(.activello-custom-accent) .woocommerce button.button:hover,
+.woocommerce:where(.activello-custom-accent) button.button:hover,
+:where(.activello-custom-accent) .woocommerce button.button:focus,
+.woocommerce:where(.activello-custom-accent) button.button:focus,
+:where(.activello-custom-accent) .woocommerce input.button:hover,
+.woocommerce:where(.activello-custom-accent) input.button:hover,
+:where(.activello-custom-accent) .woocommerce input.button:focus,
+.woocommerce:where(.activello-custom-accent) input.button:focus,
+:where(.activello-custom-accent) .woocommerce #respond input#submit.alt:hover,
+.woocommerce:where(.activello-custom-accent) #respond input#submit.alt:hover,
+:where(.activello-custom-accent) .woocommerce #respond input#submit.alt:focus,
+.woocommerce:where(.activello-custom-accent) #respond input#submit.alt:focus,
+:where(.activello-custom-accent) .woocommerce a.button.alt:hover,
+.woocommerce:where(.activello-custom-accent) a.button.alt:hover,
+:where(.activello-custom-accent) .woocommerce a.button.alt:focus,
+.woocommerce:where(.activello-custom-accent) a.button.alt:focus,
+:where(.activello-custom-accent) .woocommerce button.button.alt:hover,
+.woocommerce:where(.activello-custom-accent) button.button.alt:hover,
+:where(.activello-custom-accent) .woocommerce button.button.alt:focus,
+.woocommerce:where(.activello-custom-accent) button.button.alt:focus,
+:where(.activello-custom-accent) .woocommerce input.button.alt:hover,
+.woocommerce:where(.activello-custom-accent) input.button.alt:hover,
+:where(.activello-custom-accent) .woocommerce input.button.alt:focus,
+.woocommerce:where(.activello-custom-accent) input.button.alt:focus,
+:where(.activello-custom-accent) .input-group-btn:last-child>.btn:hover,
+:where(.activello-custom-accent) .input-group-btn:last-child>.btn:focus,
+:where(.activello-custom-accent) .scroll-to-top:hover,
+:where(.activello-custom-accent) .scroll-to-top:focus,
+:where(.activello-custom-accent) button,
+html :where(.activello-custom-accent) input[type="button"]:hover,
+html :where(.activello-custom-accent) input[type="button"]:focus,
+:where(.activello-custom-accent) input[type="reset"]:hover,
+:where(.activello-custom-accent) input[type="reset"]:focus,
+:where(.activello-custom-accent) .comment-list li .comment-body:after,
+:where(.activello-custom-accent) .page-links a:hover span,
+:where(.activello-custom-accent) .page-links a:focus span,
+:where(.activello-custom-accent) .page-links span,
+:where(.activello-custom-accent) input[type="submit"]:hover,
+:where(.activello-custom-accent) input[type="submit"]:focus,
+:where(.activello-custom-accent) .comment-form #submit:hover,
+:where(.activello-custom-accent) .comment-form #submit:focus,
+:where(.activello-custom-accent) .tagcloud a:hover,
+:where(.activello-custom-accent) .tagcloud a:focus,
+:where(.activello-custom-accent) .single .entry-content a:hover,
+.single:where(.activello-custom-accent) .entry-content a:hover,
+:where(.activello-custom-accent) .single .entry-content a:focus,
+.single:where(.activello-custom-accent) .entry-content a:focus,
+:where(.activello-custom-accent) .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+:where(.activello-custom-accent) .dropdown-menu> li> a:hover,
+:where(.activello-custom-accent) .dropdown-menu> li> a:focus,
+:where(.activello-custom-accent) .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    background-color: var(--wp--preset--color--accent);
+}
+:where(.activello-custom-accent) input[type="text"]:focus,
+:where(.activello-custom-accent) input[type="email"]:focus,
+:where(.activello-custom-accent) input[type="tel"]:focus,
+:where(.activello-custom-accent) input[type="url"]:focus,
+:where(.activello-custom-accent) input[type="password"]:focus,
+:where(.activello-custom-accent) input[type="search"]:focus,
+:where(.activello-custom-accent) textarea:focus {
+    outline-color: var(--wp--preset--color--accent);
+}
+:where(.activello-custom-social) :is(#social, #social-2, #social-3) a,
+:where(.activello-custom-social) .header-search-icon {
+    color: var(--wp--preset--color--social);
+}
+:where(.activello-custom-social-hover) :is(#social, #social-2, #social-3) a:hover,
+:where(.activello-custom-social-hover) :is(#social, #social-2, #social-3) a:focus,
+:where(.activello-custom-social-hover) .header-search-icon:hover,
+:where(.activello-custom-social-hover) .header-search-icon:focus {
+    color: var(--wp--preset--color--social-hover);
 }

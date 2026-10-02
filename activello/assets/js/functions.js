@@ -239,6 +239,7 @@
 		document.querySelectorAll( '.activello-dropdown' ).forEach( function ( el ) {
 			el.addEventListener( 'click', function () {
 				var parent = el.parentNode;
+				var open   = false;
 
 				if ( ! parent ) {
 					return;
@@ -246,9 +247,11 @@
 
 				Array.prototype.forEach.call( parent.children, function ( child ) {
 					if ( child.tagName === 'UL' ) {
-						child.classList.toggle( 'active' );
+						open = child.classList.toggle( 'active' );
 					}
 				} );
+
+				el.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
 			} );
 		} );
 	}

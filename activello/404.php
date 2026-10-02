@@ -31,13 +31,15 @@ get_header(); ?>
 									<h2 class="widgettitle"><?php esc_html_e( 'Most Used Categories', 'activello' ); ?></h2>
 									<ul>
 									<?php
-										wp_list_categories( array(
-											'orderby'    => 'count',
-											'order'      => 'DESC',
-											'show_count' => 1,
-											'title_li'   => '',
-											'number'     => 10,
-										) );
+										wp_list_categories(
+											array(
+												'orderby'  => 'count',
+												'order'    => 'DESC',
+												'show_count' => 1,
+												'title_li' => '',
+												'number'   => 10,
+											)
+										);
 									?>
 									</ul>
 								</div><!-- .widget -->
@@ -49,8 +51,15 @@ get_header(); ?>
 							<div class="col-md-6 not-found-widget">
 								<?php
 								/* translators: %1$s: smiley */
-								$archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', 'activello' ), convert_smilies( ':)' ) ) . '</p>';
-								the_widget( 'WP_Widget_Archives', 'dropdown=1&title=' . esc_html__( 'Archives', 'activello' ), "after_title=</h2>$archive_content" );
+								$activello_archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', 'activello' ), convert_smilies( ':)' ) ) . '</p>';
+								the_widget(
+									'WP_Widget_Archives',
+									array(
+										'dropdown' => 1,
+										'title'    => esc_html__( 'Archives', 'activello' ),
+									),
+									array( 'after_title' => '</h2>' . $activello_archive_content )
+								);
 								?>
 							</div>
 
@@ -58,7 +67,7 @@ get_header(); ?>
 								<?php the_widget( 'WP_Widget_Tag_Cloud', 'title=' . esc_html__( 'Tags', 'activello' ) ); ?>
 							</div>
 						</div>
-
+					</div><!-- .page-content -->
 
 				</section><!-- .error-404 -->
 			</div>

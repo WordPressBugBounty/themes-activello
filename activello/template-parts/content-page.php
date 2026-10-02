@@ -7,11 +7,11 @@
 ?>
 
 <?php
-	$thumbnail_args = array(
+	$activello_thumbnail_args = array(
 		'class' => 'single-featured',
 	);
-	the_post_thumbnail( 'activello-featured', $thumbnail_args );
-?>
+	the_post_thumbnail( 'activello-featured', $activello_thumbnail_args );
+	?>
 
 <div class="post-inner-content">
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -22,12 +22,14 @@
 	<div class="entry-content">
 		<?php the_content(); ?>
 		<?php
-		wp_link_pages( array(
-			'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'activello' ),
-			'after'  => '</div>',
-		) );
+		wp_link_pages(
+			array(
+				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'activello' ),
+				'after'  => '</div>',
+			)
+		);
 		?>
 	</div><!-- .entry-content -->
-	<?php edit_post_link( esc_html__( 'Edit', 'activello' ), '<footer class="entry-footer"><i class="fa fa-pencil-square-o"></i><span class="edit-link">', '</span></footer>' ); ?>
+	<?php edit_post_link( esc_html__( 'Edit', 'activello' ), '<footer class="entry-footer"><i class="fa-regular fa-pen-to-square"></i><span class="edit-link">', '</span></footer>' ); ?>
 </article><!-- #post-## -->
 </div>

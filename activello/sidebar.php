@@ -7,19 +7,10 @@
 ?>
 </div>
 
-	<?php
-	$show_sidebar = true;
-	if ( is_singular() && ( get_post_meta( $post->ID, 'site_layout', true ) ) ) {
-		if ( get_post_meta( $post->ID, 'site_layout', true ) == 'no-sidebar' || get_post_meta( $post->ID, 'site_layout', true ) == 'full-width' ) {
-			$show_sidebar = false;
-		}
-	} elseif ( get_theme_mod( 'activello_sidebar_position' ) == 'no-sidebar' ||  get_theme_mod( 'activello_sidebar_position' ) == 'full-width' ) {
-		$show_sidebar = false;
-	} ?>
-	<?php if ( $show_sidebar ) : ?>            
+	<?php if ( activello_show_sidebar() ) : ?>
 		<div id="secondary" class="widget-area col-sm-12 col-md-4" role="complementary">
 			<div class="inner">
-				<?php do_action( 'before_sidebar' ); ?>
+				<?php do_action( 'before_sidebar' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Underscores' hook, kept for child themes. ?>
 				<?php if ( ! dynamic_sidebar( 'sidebar-1' ) ) : ?>
 					<aside id="search" class="widget widget_search">
 						<?php get_search_form(); ?>
@@ -29,10 +20,11 @@
 						<h3 class="widget-title"><?php esc_html_e( 'Archives', 'activello' ); ?></h3>
 						<ul>
 							<?php
-								$archive_args = array(
+								$activello_archive_args = array(
 									'type' => 'monthly',
 								);
-								wp_get_archives( $archive_args ); ?>
+								wp_get_archives( $activello_archive_args );
+								?>
 						</ul>
 					</aside>
 

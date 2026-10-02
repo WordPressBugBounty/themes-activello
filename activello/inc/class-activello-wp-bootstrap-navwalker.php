@@ -21,7 +21,9 @@ class Activello_Wp_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 */
 	public function start_lvl( &$output, $depth = 0, $args = array() ) {
 		$indent = str_repeat( "\t", $depth );
-		$output .= "\n$indent<ul role=\"menu\" class=\" dropdown-menu\">\n";
+		// No role="menu": that promises menuitem children and arrow-key
+		// navigation, neither of which this list has.
+		$output .= "\n$indent<ul class=\"dropdown-menu\">\n";
 	}
 
 		/**
@@ -45,57 +47,66 @@ class Activello_Wp_Bootstrap_Navwalker extends Walker_Nav_Menu {
 				 * comparison that is not case sensitive. The strcasecmp() function returns
 				 * a 0 if the strings are equal.
 				 */
-		if ( 0 == strcasecmp( $item->attr_title, 'divider' ) && 1 === $depth ) {
+		if ( 0 === strcasecmp( $item->attr_title, 'divider' ) && 1 === $depth ) {
 			$output .= $indent . '<li role="presentation" class="divider">';
-		} elseif ( 0 == strcasecmp( $item->title, 'divider' ) && 1 === $depth ) {
+		} elseif ( 0 === strcasecmp( $item->title, 'divider' ) && 1 === $depth ) {
 			$output .= $indent . '<li role="presentation" class="divider">';
-		} elseif ( 0 == strcasecmp( $item->attr_title, 'dropdown-header' ) && 1 === $depth ) {
-			$output .= $indent . '<li role="presentation" class="dropdown-header">' . esc_attr( $item->title );
-		} elseif ( 0 == strcasecmp( $item->attr_title, 'disabled' ) ) {
-			$output .= $indent . '<li role="presentation" class="disabled"><a href="#">' . esc_attr( $item->title ) . '</a>';
+		} elseif ( 0 === strcasecmp( $item->attr_title, 'dropdown-header' ) && 1 === $depth ) {
+			$output .= $indent . '<li role="presentation" class="dropdown-header">' . esc_html( $item->title );
+		} elseif ( 0 === strcasecmp( $item->attr_title, 'disabled' ) ) {
+			$output .= $indent . '<li role="presentation" class="disabled"><a href="#">' . esc_html( $item->title ) . '</a>';
 		} else {
 			$class_names = '';
-			$value = '';
-			$classes = empty( $item->classes ) ? array() : (array) $item->classes;
-			$classes[] = 'menu-item-' . $item->ID;
+			$value       = '';
+			$classes     = empty( $item->classes ) ? array() : (array) $item->classes;
+			$classes[]   = 'menu-item-' . $item->ID;
 
-			$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+			/*
+			 * The core menu filters, applied as Walker_Nav_Menu applies them so
+			 * plugins that hook into menus keep working with this walker.
+			 */
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
+			$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args, $depth ) );
 
-			// if ( $args->has_children )
-			//         $class_names .= ' dropdown';
-
-			if ( in_array( 'current-menu-item', $classes ) ) {
+			if ( in_array( 'current-menu-item', $classes, true ) ) {
 					$class_names .= ' active';
 			}
 
 			$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
 
-			$id = apply_filters( 'nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args );
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
+			$id = apply_filters( 'nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args, $depth );
 			$id = $id ? ' id="' . esc_attr( $id ) . '"' : '';
 
 			$output .= $indent . '<li' . $id . $value . $class_names . '>';
 
-			$atts = array();
-			$atts['title']  = ! empty( $item->title )        ? $item->title        : '';
-			$atts['target'] = ! empty( $item->target )        ? $item->target        : '';
-			$atts['rel']    = ! empty( $item->xfn )                ? $item->xfn        : '';
+			/*
+			 * No title attribute: it repeated the link text, so screen readers
+			 * announced every item twice. (The Title Attribute field is used
+			 * for a glyphicon class below.)
+			 */
+			$atts           = array();
+			$atts['target'] = ! empty( $item->target ) ? $item->target : '';
+			$atts['rel']    = ! empty( $item->xfn ) ? $item->xfn : '';
+			if ( ! empty( $item->current ) ) {
+				$atts['aria-current'] = 'page';
+			}
 
 			// If item has_children add atts to a.
 			if ( 0 === $args->has_children && $depth ) {
-				$atts['href']                   = ! empty( $item->url ) ? $item->url : '';
-				;
-				// $atts['data-toggle']        = 'dropdown';
-				$atts['class']                        = 'dropdown-toggle';
+				$atts['href']  = ! empty( $item->url ) ? $item->url : '';
+				$atts['class'] = 'dropdown-toggle';
 			} else {
 				$atts['href'] = ! empty( $item->url ) ? $item->url : '';
 			}
 
-			$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args );
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
+			$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args, $depth );
 
 			$attributes = '';
 			foreach ( $atts as $attr => $value ) {
 				if ( ! empty( $value ) ) {
-					$value = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
+					$value       = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
 					$attributes .= ' ' . $attr . '="' . $value . '"';
 				}
 			}
@@ -111,15 +122,28 @@ class Activello_Wp_Bootstrap_Navwalker extends Walker_Nav_Menu {
 			 */
 			if ( ! empty( $item->attr_title ) ) {
 					$item_output .= '<a' . $attributes . '><span class="glyphicon ' . esc_attr( $item->attr_title ) . '"></span>&nbsp;';
-			} else {                  $item_output .= '<a' . $attributes . '>';
+			} else {
+				$item_output .= '<a' . $attributes . '>';
 			}
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
 			$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
-			$item_output .= ( $args->has_children ) ? ' </a><span class="activello-dropdown"></span>' : '</a>';
+			/*
+			 * The sub-menu toggle, shown on touch screens of tablet width and
+			 * up. It was an empty <span> with a click handler, which keyboards
+			 * cannot reach and screen readers do not announce.
+			 */
+			$item_output .= ( $args->has_children )
+				? ' </a><button type="button" class="activello-dropdown" aria-expanded="false"><span class="screen-reader-text">'
+					/* translators: %s: parent menu item title */
+					. esc_html( sprintf( __( 'Show sub-menu of %s', 'activello' ), wp_strip_all_tags( $item->title ) ) )
+					. '</span></button>'
+				: '</a>';
 			$item_output .= $args->after;
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
 			$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
-		}// End if().
+		}
 	}
 
 		/**
@@ -172,14 +196,14 @@ class Activello_Wp_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		$fb_output = null;
 
 		if ( $args['container'] ) {
-			$fb_output = '<' . $args['container'];
+			$fb_output = '<' . tag_escape( $args['container'] );
 
 			if ( $args['container_id'] ) {
-					$fb_output .= ' id="' . $args['container_id'] . '"';
+					$fb_output .= ' id="' . esc_attr( $args['container_id'] ) . '"';
 			}
 
 			if ( $args['container_class'] ) {
-					$fb_output .= ' class="' . $args['container_class'] . '"';
+					$fb_output .= ' class="' . esc_attr( $args['container_class'] ) . '"';
 			}
 
 			$fb_output .= '>';
@@ -188,28 +212,30 @@ class Activello_Wp_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		$fb_output .= '<ul';
 
 		if ( $args['menu_id'] ) {
-				$fb_output .= ' id="' . $args['menu_id'] . '"';
+				$fb_output .= ' id="' . esc_attr( $args['menu_id'] ) . '"';
 		}
 
 		if ( $args['menu_class'] ) {
-				$fb_output .= ' class="' . $args['menu_class'] . '"';
+				$fb_output .= ' class="' . esc_attr( $args['menu_class'] ) . '"';
 		}
 
 		$fb_output .= '>';
-		$fb_output .= wp_list_pages( array(
-			'depth' => 1, //number of tiers, 0 for unlimited
-			'exclude' => '', //comma seperated IDs of pages you want to exclude
-			'title_li' => '', //must override it to empty string so that it does not break our nav
-			'sort_column' => 'post_title', //see documentation for other possibilites
-			'sort_order' => 'ASC', //ASCending or DESCending
-			'echo' => false,
-		));
+		$fb_output .= wp_list_pages(
+			array(
+				'depth'       => 1,
+				'exclude'     => '',
+				'title_li'    => '', // Must be empty, or it wraps the list in another <li>.
+				'sort_column' => 'post_title',
+				'sort_order'  => 'ASC',
+				'echo'        => false,
+			)
+		);
 		$fb_output .= '</ul>';
 
 		if ( $args['container'] ) {
-				$fb_output .= '</' . $args['container'] . '>';
+				$fb_output .= '</' . tag_escape( $args['container'] ) . '>';
 		}
 
-		echo $fb_output;
+		echo $fb_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- attributes escaped above; wp_list_pages() markup.
 	}
 }

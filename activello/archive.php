@@ -70,19 +70,22 @@ get_header(); ?>
 							esc_html_e( 'Archives', 'activello' );
 
 						endif;
-					?>
+						?>
 				</h1>
 				<?php
 					// Show an optional term description.
-					$term_description = term_description();
-				if ( ! empty( $term_description ) ) :
-					printf( '<div class="taxonomy-description">%s</div>', $term_description );
+					$activello_term_description = term_description();
+				if ( ! empty( $activello_term_description ) ) :
+					printf( '<div class="taxonomy-description">%s</div>', wp_kses_post( $activello_term_description ) );
 					endif;
 				?>
 			</header><!-- .page-header -->
 
 			<?php /* Start the Loop */ ?>
-			<?php while ( have_posts() ) : the_post(); ?>
+			<?php
+			while ( have_posts() ) :
+				the_post();
+				?>
 
 				<?php
 					/* Include the Post-Format-specific template for the content.
